@@ -8,6 +8,7 @@
 #include "nodes/sprite_2d.h"
 #include "resources/point_mesh.h" 
 #include "resources/line_mesh.h" 
+#include "resources/array_mesh.h" 
 #include "servers/render_server.h"
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
 
 
     // game init
-    root.add_child(new MeshInstance2D(new PointMesh(500, 250)));
+    root.add_child(new MeshInstance2D(new PointMesh((Color){.r = 0, .g = 1, .b = 0}, 500, 250, 0, 2)));
     root.add_child(new Node);
     root.add_child(new Node2D);
 
@@ -51,8 +52,25 @@ int main(int argc, char **argv) {
     root.add_child(new Node);
     root.add_child(new Node);
     a->add_child(new MeshInstance2D(500, 250, new LineMesh((Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100})));
+    a->add_child(new MeshInstance2D(100, 250, new LineMesh((Color){.r = 1, .g = 0, .b = 0}, (Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100}, 10)));
+    a->add_child(new MeshInstance2D(0, 250, new LineMesh((Color){.r = 1, .g = 0, .b = 0}, (Color){.r = 1, .g = 0, .b = 1}, (Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100})));
     a->add_child(new Sprite2D(0, 0, new Texture("supermario.bmp", 512, 512)));
     root.add_child(new MeshInstance2D(new PointMesh(1000, 500)));
+    
+    ArrayMesh *array_mesh = new ArrayMesh();
+    array_mesh->points.push_back({.x = 0, .y = 100});
+    array_mesh->points.push_back({.x = 100, .y = 100});
+    array_mesh->points.push_back({.x = 100, .y = 0});
+    root.add_child(new MeshInstance2D(array_mesh));
+
+    ArrayMesh *array_mesh2 = new ArrayMesh();
+    array_mesh2->points.push_back({.x = 0, .y = 100});
+    array_mesh2->points.push_back({.x = 100, .y = 100});
+    array_mesh2->points.push_back({.x = 100, .y = 0});
+    array_mesh2->colors.push_back({.r = 1, .g = 0, .b = 0});
+    array_mesh2->colors.push_back({.r = 0, .g = 1, .b = 0});
+    root.add_child(new MeshInstance2D(400, 40, array_mesh2));
+
 
     // delete a;
 

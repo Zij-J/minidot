@@ -29,13 +29,17 @@
                 - 記得 render 要使用原本的 dfs_stack, 主 Viewport 才不會重複 render 到 SubViewport child
         - 簡化: Godot 用神奇 ClassDB 實現 signal(command pattern) in Object Class for C++, C#, GDscript 互通，我們用 delegate.h 實作即可(放在 ./templates 裡)
         - 簡化: Godot 原本會用 Control Node 處理全部 UI ，我改用 Node2D-derived Node 就好~
+
     - resources 存 data (可以 multiple node 共用 1 resource)
-        - 簡化: Godot 的 Line 以 Line2D Node implement, 把底層 Mesh 隱藏起來, 使用上比較方便, 我們改直接用 LineMesh 
+        - 簡化: Godot 的 Line 以 Line2D Node implement, 把底層 Mesh 隱藏起來, 使用上比較方便 + width 能 scaling, 我們改直接用 LineMesh (width 不能 scaling...) 
+        - 簡化: Godot 的 ArrayMesh 能用 Vertices Array 外東西去畫, 我們只用 Vertices Array  
         - 簡化: Godot Texture 不只 ImageTexture 還有 MeshTexture, NoiseTexture...，我們只能放 Image, 所以沒有 derived classes
             - 簡化: Godot Image loading 有專門 singleton, 能在不同地方使用 Image，不需要，不實做 Image singleton 了
+
     - servers 使用 nodes 與 resources，更新 node tree 或 Output  
         - 簡化: Godot 的 resources 真的只存 data, function implement 都在 servers, 這樣能同時支援 OpenGL, Vulkan 等，我們改在 resources 直接 implement，server 不用寫每個 resource 對應接口~
         - 改: Godot 處理 input 功能包在 DisplayServer 裡了，我不太喜歡，自創 InputServer
+
     - templates 放常用的 data type
     - config 放設定檔
     - thirdparty 放不是我寫的 code: 如 file praser

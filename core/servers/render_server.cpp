@@ -35,7 +35,7 @@ void RenderServer::redraw() {
             Transform3D final_transform = {
                 .basis_x = (Vector3){.x = static_cast<float>(object_transform_2d.basis_x.x), .y = static_cast<float>(object_transform_2d.basis_x.y), .z = 0}, 
                 .basis_y = (Vector3){.x = static_cast<float>(object_transform_2d.basis_y.x), .y = static_cast<float>(object_transform_2d.basis_y.y), .z = 0}, 
-                .basis_z = (Vector3){.x = 0, .y = 0, .z = 1},
+                .basis_z = (Vector3){.x = 0, .y = 0, .z = 0},   // project to z = 0
                 .origin_offset = (Vector3){.x = static_cast<float>(object_transform_2d.origin_offset.x), .y = static_cast<float>(object_transform_2d.origin_offset.y), .z = 0}
             };
 
