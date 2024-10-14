@@ -1,0 +1,8 @@
+/.vscode
+/GLUT_env
+
+/*.exe
+**/*.o
+**/*.d
+
+*.dll

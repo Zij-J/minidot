@@ -1,0 +1,16 @@
+# Exhaustive licensing information for files in ./thirdparty
+# detail licenses of each library can be found in their respective dictonary, e.g. `./stb/LICENSE`
+# =========================================================================
+
+Files: ./stb/*
+Upstream-Name: stb single-file public domain libraries for C/C++
+Source: https://github.com/nothings/stb/tree/master?tab=License-1-ov-file
+Copyright: 2017, Sean Barrett
+License: MIT License
+
+
+Files: ./bmp_io/*
+Upstream-Name: File BMP_IO.h
+Source: Unknown
+Copyright:  2004, Huamin Wang
+License: Unknown
