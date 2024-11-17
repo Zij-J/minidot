@@ -15,8 +15,8 @@ public:
     Node() {}
     virtual ~Node();
 
-    const Vector<Node *> &get_childs() const {
-        return childs;
+    const Vector<Node *> &get_children() const {
+        return children;
     }
     const Node *get_parent() const {
         return parent;
@@ -27,7 +27,7 @@ public:
 private:
     bool is_deleting = false;
     Node *parent = nullptr;
-    Vector<Node *> childs;
+    Vector<Node *> children;
 };
 
 

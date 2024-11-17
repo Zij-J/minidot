@@ -14,7 +14,6 @@ public:
     virtual ~Mesh() {}
 
     virtual void draw(const Transform3D &final_transform) const = 0; // viewport + object transform done
- 
 };
 
 #endif

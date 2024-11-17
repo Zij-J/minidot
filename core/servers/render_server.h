@@ -3,10 +3,20 @@
 #ifndef RENDER_SERVER_H
 #define RENDER_SERVER_H
 
-#include "../nodes/mesh_instance_2d.h"
+#include "../resources/texture.h"
+#include "../resources/mesh.h"
+#include "../nodes/node_3d.h"
+#include "../templates/ref.h"
 
 class RenderServer {    
 public:
+    struct DrawingMesh {
+        Ref<Mesh> mesh;
+        Node3D *containing_node;
+        DrawingMesh *before;
+        DrawingMesh *next;
+    };
+
     static RenderServer &initialize(Viewport *root) {
         if (singleton == nullptr) {
             singleton = new RenderServer(root);
@@ -26,14 +36,45 @@ public:
         }
     }
 
+    // void new_texture_instance(Texture *texture, Transform2D *global_position, const Texture *before) { // if has no before, pass nullptr 
+    //     DrawingTexture *new_texture = new DrawingTexture;
+    //     new_texture->global_position = global_position;
+    //     new_texture->texture = texture;
+
+    //     // add as next of `before` 
+    //     DrawingTexture *now_texture = texture_list;
+    //     while (now_texture->texture != before) { // if nullptr, will stop at head node
+    //         now_texture = now_texture->next;
+    //     }
+    //     new_texture->next = now_texture->next;
+    //     now_texture->next = new_texture;
+    // }
+
+    const DrawingMesh *new_mesh_instance(Ref<Mesh> mesh, Node3D *containing_node);
+    void delete_mesh_instance(const DrawingMesh *mesh);
+
     void redraw();
 
 private:
+
+    // struct DrawingTexture {
+    //     Texture *texture;
+    //     Node2D *containing_node;
+    //     DrawingTexture *next;
+    // };
+
+
     static RenderServer *singleton;
     static bool is_deleting;
-    Viewport *root;
 
-    RenderServer(Viewport *root): root(root) {}
+    Viewport *root = nullptr; 
+    // DrawingTexture *texture_list = new DrawingTexture;  // head noded list
+    DrawingMesh *mesh_list = new DrawingMesh;           // head noded list
+
+    RenderServer(Viewport *root): root(root) {
+        // texture_list->next = nullptr;
+        mesh_list->next = nullptr;
+    }
 };
 
 

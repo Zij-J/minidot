@@ -45,7 +45,8 @@ int main(int argc, char **argv) {
     root.add_child(new Node);
     root.add_child(new Node2D);
 
-    Node *a = new Node2D(1000, 100);
+    // Node *world = new Node2D(1000, 100);
+    Node2D *a = new Node2D();
     
     
     root.add_child(a);
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
     a->add_child(new MeshInstance2D(500, 250, new LineMesh((Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100})));
     a->add_child(new MeshInstance2D(100, 250, new LineMesh((Color){.r = 1, .g = 0, .b = 0}, (Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100}, 10)));
     a->add_child(new MeshInstance2D(0, 250, new LineMesh((Color){.r = 1, .g = 0, .b = 0}, (Color){.r = 1, .g = 0, .b = 1}, (Vector3){.x = 0, .y = 0}, (Vector3){.x = 100, .y = 100})));
-    a->add_child(new Sprite2D(0, 0, new Texture("supermario.bmp", 512, 512)));
+    // a->add_child(new Sprite2D(0, 0, new Texture("supermario.bmp", 512, 512)));
     root.add_child(new MeshInstance2D(new PointMesh(1000, 500)));
     
     ArrayMesh *array_mesh = new ArrayMesh();

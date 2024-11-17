@@ -1,5 +1,3 @@
-`#include <GL/glut.h>` 的 include 方式參照官網: https://www.opengl.org/archives/resources/code/samples/glut_examples/examples/examples.html
-
 # OpenGL 環境
 - 使用 [freeglut](https://freeglut.sourceforge.net/), 用 https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut 載
     - link + 執行需要: C:\Windows\System32\opengl32.dll 和 C:\msys64\ucrt64\lib\libfreeglut.dll.a 引導至 C:\msys64\ucrt64\bin\libfreeglut.dll
@@ -55,55 +53,98 @@
 - if v.s. empty function call: https://stackoverflow.com/questions/10797398/which-is-faster-empty-function-call-or-if-statements
     - function call 比較傷，目前 RenderServer 還是用 if 去看是否 Node 需要 draw
 
-# RD (Reserch & Development)
-[V] create windows
-    [V] naming
+# RD (Reserch & Development) 時的自言自語
+[V] fix dirty transform 
+    - Godot 用 RECURSIVE 更新 global transform: https://github.com/godotengine/godot/blob/master/scene/3d/node_3d.cpp (line 481, 115)
+        - 推測不是 performance critical + 讓程式簡潔，所以醬
+        - 我拒絕! 我愛 iterative!
+[] Viewport 2D > 3D (to camera coordinate > project transform)
+    [] camera3D
+    [] project transform(相對 camera position + perspective projection) 存在 Viewport, 用在 RenderServer
+    - 手刻參考: https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling + 姚智原教授的 OpenGL 課本(2019 買的 2018 出版書)
+        - 沒有實踐 Frustum-Culling (Godot 有 AABB 系統，我沒有又懶了刻...)
+    - Godot 如何在 Scene Tree 中找到各種 resources (mesh, texture) 再一一畫出來？
+        - 絕對不是整顆 Tree Traversal + 肥肥的 switch-case
+        - doucment 的詳細解釋圖： https://docs.godotengine.org/en/stable/contributing/development/core_and_modules/internal_rendering_architecture.html#core-rendering-classes-architecture
+            - 我的理解：真正的 resource 存在 RenderServer 中， 畫的時候做 linked-list Traversal https://github.com/godotengine/godot/blob/master/servers/rendering/renderer_rd/renderer_canvas_render_rd.cpp (line 758, 907)
+                - 2D, renderer_canvas_cull.cpp: _render_canvas_item_tree
+                    - 其中 _cull_canvas_item 算出畫面內的物件，只畫那些
+                    - cull 前仍紀錄著 parent/child 關係 (相當於 maintain 了另一個 tree, 仍包含 Node2D 等沒用物件，但比整個 tree 好很多)
+                    - cull 完會變成 linked-list, 在 renderer_canvas_render_rd.cpp: canvas_render_items 中做 linked-list Traversal
+                - 3D, renderer_scene_cull.cpp:
+                    - 我試著看了，找不到重點(Traversal 在哪? 哪個 list, 哪個 sorting 是重點?)...
+                    - GPT 整理版，聽起來很合理: 
+                        - 一樣會有 list 記錄所有 mesh
+                        - 會依據 depth, 與 camera 相對位置 sorting (幾乎每個 frame 都 sort), 再畫(可能 batch, batch 畫)
+        - 問學長們，OpenGL 與 Vulkan 的 data structure:
+            - Vertices Array(只記頂點的 1D array) + index array(哪個區域是一組的) 
 
-[V] node tree (for position + redraw):
-    [V] node: base memory management
-    [V] node_2d: position(relative to parent) & transforms (good as pivots)
-
-[] draw primitive(lines, triangles, dots)
-    [] storing data structure
-        [] basic
-            [] vector
-            [] stack
-            [] singleton check
-        [] mesh (store vertex)
-            [] lines
-            [] triangles
-            [] dots
-    [] draw command
-        [] dfs, calling `draw` from mesh_2d
-        [] mesh_2d `draw`
-            [X] local > global transforms
-                - mesh 存 "原始大小、座標"
-                - mesh_instance_2d 存 "transform" by mesh_instance_2d 到 root Node2D 的 transform
-                - mesh 以 原始座標 * transform(由 RenderServer 傳入) 得到 global 位置、draw 出來
-            [] scaling included
-        [] quene_redraw variable + set it in `idle` 
-        [] (vertex = 1: dot, vertex = 2: line, vertex = 3: triangles, vertex > 3: multi triangles)
-    [] random
-[] clear primitives
-
-[] parse .bmp image
-    [] data structure
-[] draw images
-    [] property change
-[] clear image
-
-[] parse .ttf fonts
-    [] data structure
-[] draw fonts
-    [] property change
-[] make button
-    [] property change
-    [] interact
-    [] animation
-
-
-# UI/UX
-[] color choose
-[] font choose
-[] UI size
-[] UI position
+    - 光查懂這些就沒時間了，哈哈...
+        - 放棄手刻，用 high level OpenGL function 設 camera + 管他的肥肥 switch case 下去, 直接搞定吧 
+        - 簡化。改
+            - 一樣的 Node 系統，但
+            - 2D: render_server 多紀錄"DrawingTexture(texture + global transform) 的 linked-list" (Godot 可能能用 2D 顯示的很多 + 想分離 Server/Node 系統，選擇 maintain 一個 tree, 我們都不需要~)
+            - 3D: render_server 多紀錄"DrawingMesh(Mesh + global transform) 的 linked-list"
+        - 因為很常 Add, Remove, 不用 Array
+            - 3D Sorting 交給 OpenGL 做 (要做就得做 projection transform + depth test sorting + frustum culling 才完整，有點太多...)
+            - 2D Sorting 在 addition(反向 traverse 找上一項, 大部分 Node2D 都有 texture 所以很快) / removal(Node2D 也紀錄 list 刪除)
+        - Resource 以 RefCount 存 
+            - node 與 linked list 只存 Ref
+            - 當 RefCount 的 Ref 數量歸 0, 自動 free 自己
+        - Node 要紀錄 Drawingtexture/Mesh, 在改動時通知 render_server 改動
+            - **與 dirty 系統不相容? (render_server 畫，不會通知 Node)**
+            - Godot 2D 似乎很暴力：
+                - 每次畫，就 clear 自己 https://github.com/godotengine/godot/blob/master/scene/main/canvas_item.cpp (CanvasItem::_redraw_callback)
+                - 然後每次 draw 再創一個回來 https://github.com/godotengine/godot/blob/master/scene/resources/texture.cpp (Texture2D::draw)
+                - 怪怪的，CanvasItem 是 Node, Texture2D 是 Resource, 不能混為一談 
+                - 有點太多了，我查不下去了...
+            - 最後小結: 
+                - 根據 https://github.com/godotengine/godot/blob/master/servers/rendering/renderer_rd/renderer_canvas_render_rd.cpp (RendererCanvasRenderRD::canvas_render_items), Server 內 canvas_item 也要算 transform
+                - 再加上 https://github.com/godotengine/godot/blob/master/scene/main/canvas_item.cpp (CanvasItem::get_global_transform) 沒有通知 RenderServer 
+                - 很可能他們 maintain 了兩份 local > gloabl 的 transform，讓 Server/Node 端真、獨立運作
+                    - 想 Server 通知 Node + 不 coupling Node 系統，可以發 signal，但每個 draw 都發(signal 無法 inline)，有點太多 function call...
+                - P.S. 3D 似乎也是:
+                    - https://github.com/godotengine/godot/blob/master/scene/3d/mesh_instance_3d.cpp (MeshInstance3D::_mesh_changed), 把 Mesh 加入 `Instance`(有 transform3D) in RenderServer 
+                    - `RS` Macro == RenderServer, 我因為這樣看不懂很久，超煩！  
+            - 看來:
+                - 對壓，都要存 reference 了，不如存 Node 的 reference 就好!
+                    - 不行， mesh_instance_2d(Node2D) 放的是 mesh(3D)
+                    - 那就是 mesh_instance_2d 的錯了！
+                - Godot Server/Node 是分開的，在 2D Node 創 3D 容易
+                    - 但我們不是！
+                    - 決定特殊 Node 用特殊對應方式： mesh_instance_2d 其實是 Node3D, 就完全沒問題啦！
+                    - progrogate change 的部分?
+                        - 2D > 3D 做不到！
+                    - Godot 的 mesh_instance_2d 怎麼處理？
+                        - https://github.com/godotengine/godot/blob/master/scene/2d/mesh_instance_2d.cpp (MeshInstance2D::_notification) 接收 redraw 後要做的事
+                        - 這裡 call 了 CanvasItem::draw_mesh
+                        - 原來他們是先分 2D/3D 再分 Mesh/Texture, 我妄想 Mesh/Texture 就能函蓋 2D/3D 有點太難了
+                    - 等等他們確實在 2D 使用 notify 機制了
+                        - 類似 `void Update`, 在 draw 前會先去 call notify, 能寫遊戲機制之類的
+            - 結:
+                - 最佳: Mesh/Texture + Trnasform 
+                    - 因 dirty 做不到
+                - 次佳: Mesh/Texture + Node2D/Node3D + get_global_transform
+                    - 因 mesh_instance_2d 做不到 
+                - 次次佳: draw notify (紀錄 Node2D/Node3D) + Node2D/Node3D draw call > Mesh/Texture 的 draw   
+                    - 但為了 10% 的 mesh_instance_2d/Texture in 3D, 放棄 90% performance ，感覺有點遭
+                - 次佳、改： ... + mesh_instance_2d DIRTY HACKS
+                    - 問題：怎麼 hack?
+                    - main problem:
+                        1. draw 需要 Node3D 的 get_global_transform
+                        2. progrogate transform 需要 Node2D 的 get_global_transform, 基本上不相通
+                    - 唯一解法: (共用變數? 需要將原本 transform pointer/Ref, 每次 access 都多一層 indirection/memory access, 我覺得不好) 
+                        - draw 或 local transform 後提供 notify 機制
+                        - draw 後: 不如用次次佳解； 所以 **update 完 local transform 後 notify, 同步 mesh_instance_2d 中的 Node3D transform**是最佳解
+                        - 因為 local transform 最少 + 計算最少，我很滿意這個結果
+                            - 小缺點: 這是 Godot 分開 Node/Server 的 fu, draw in Node3D 不會更新 Transform2D, 但 mesh_instance_2d 很稀有，為了 90% reabiblity + performance，沒差 
+                        - 目前: 只有 2D 會 notify 而已，需要再加
+            - 除了 culling 部分懶了實踐，其他都有了！
+                - ***沒時間實作 "以 tree order" 加入...***, 只是直接加而已
+                - 也沒有 sprite2D 了!! 先求有再求好!
+[V] RefCounted
+    - RefCounted 一定要 Ref (Ref has a `Type`) 才行，不可能有 class 能同時 "只有 counter + pointer" / "有整個 class data member"，畢竟**變數一下去整個 data member 一定要 malloc 好**，`Type` is a/has a RefCount 不可行。
+    - Godot 中 RefCounted 這個 base 感覺很沒用，所以我只實作 Ref
+[V] Node3D
+[] MeshInstance3D
+[] Input Callback

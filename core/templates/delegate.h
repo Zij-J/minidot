@@ -17,13 +17,13 @@ public:
     // make delegate know the listener(function)
     template <void (*listener)(void)>
     void add_listener() {
-        internal_notify_function = &internal_notify_delegate<listener>;
+        internal_notify_function = &_internal_notify_delegate<listener>;
     }
     // make delegate know the listener(member function)
     template <class C, void (C::*listener)(void)>
     void add_listener(C *listening_instacne) {
         delegate_instance = listening_instacne;
-        internal_notify_function = &internal_notify_delegate<C, listener>; 
+        internal_notify_function = &_internal_notify_delegate<C, listener>; 
     }
 
 
@@ -40,11 +40,11 @@ private:
 
 
     template <void (*listener)(void)> // for normal function
-    static void internal_notify_delegate(void *give_me_nullptr) {
+    static void _internal_notify_delegate(void *give_me_nullptr) {
         listener();
     }
     template <class C, void (C::*listener)(void)> // for member function
-    static void internal_notify_delegate(void *listener_instance) {
+    static void _internal_notify_delegate(void *listener_instance) {
         (static_cast<C *>(listener_instance)->*listener)(); // make instance pointer back to original to get the listener function
     }
 };
