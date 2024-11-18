@@ -11,6 +11,7 @@
 #include "resources/point_mesh.h" 
 #include "resources/line_mesh.h" 
 #include "resources/array_mesh.h" 
+#include "resources/box_mesh.h" 
 #include "servers/render_server.h"
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -101,9 +102,12 @@ int main(int argc, char **argv) {
         tank->rotate_y(45);
         // tank->rotate_z(45);
 
+        tank->add_child(new MeshInstance3D(-1.5f, 0.0f, 0.0f, new BoxMesh((Color){.r = 0, .g = 1, .b = 0}, 0.5f, 1.0f, 1.75f)));
+
         Camera3D *camera = new Camera3D(0, 0, 5);
         tank->add_child(camera);
-        camera->rotate_x(20);
+        camera->translate(0.0f, 1.0f, 0);
+        camera->rotate_x(-30.0f);
         tank->translate(0.5, 0, 0); 
     }
 

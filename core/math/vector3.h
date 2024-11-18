@@ -37,6 +37,13 @@ struct Vector3 {
         return *this;
     }
 
+    const Vector3 &operator*=(float scalar) {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+        return *this;
+    }
+
     template <typename Type>
     Vector3 operator+(const Type &right) const {
         Vector3 result = *this;

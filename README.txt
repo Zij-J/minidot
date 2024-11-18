@@ -162,5 +162,6 @@
     [V] server: camera setting > 3D > glLookAt+Orth2D > 2D 
     - no 2D, yet!
 [] BoxMesh
+[] PointLight
 ---- (fast hw2) ----
 [] Input Callback

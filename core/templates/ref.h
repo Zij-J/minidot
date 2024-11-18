@@ -1,7 +1,6 @@
 #ifndef REF
 #define REF
 
-#include "../debugger/code_tester.h"
 
 // pointer-ish, reference counting, simplied from Godot: https://github.com/godotengine/godot/blob/master/core/object/ref_counted.h
 template <typename Type>
@@ -55,7 +54,6 @@ private:
         if (*counter == 0) {
             delete counter;
             delete object;
-            DEBUG_COUT("clear");
         }
     }
     
