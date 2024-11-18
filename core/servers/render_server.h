@@ -7,6 +7,7 @@
 #include "../resources/mesh.h"
 #include "../nodes/node_2d.h"
 #include "../nodes/node_3d.h"
+#include "../nodes/viewport.h"
 #include "../templates/ref.h"
 
 class RenderServer {    

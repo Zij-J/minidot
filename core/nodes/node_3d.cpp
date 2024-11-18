@@ -1,7 +1,6 @@
 #include "node_3D.h"
 #include "../math/math_defs.h"
 #include <math.h>
-#include "../debugger/code_tester.h"
 
 
 void Node3D::on_tree_entered() {

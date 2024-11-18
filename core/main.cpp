@@ -7,6 +7,7 @@
 #include "nodes/mesh_instance_3d.h" 
 #include "nodes/viewport.h"
 #include "nodes/sprite_2d.h"
+#include "nodes/camera_3d.h"
 #include "resources/point_mesh.h" 
 #include "resources/line_mesh.h" 
 #include "resources/array_mesh.h" 
@@ -79,7 +80,7 @@ int main(int argc, char **argv) {
     Node3D *tank = new Node3D;
     root.add_child(tank);
     // tank->translate(0.5, 0, 0); 
-    tank->translate(0, 0.5, 0); // up is y
+    // tank->translate(0, 0.5, 0); // up is y
     // tank->translate(0, 0, 0.5); 
 
     { // let `Ref<Mesh>` freeable (`glutMainLoop` won't finish `main` scope)
@@ -95,9 +96,15 @@ int main(int argc, char **argv) {
         box_mesh->points.push_back({.x = box_width / 2, .y = box_width / 2, .z = box_width / 2});
         Ref<Mesh> ref_box_mesh = box_mesh;
         tank->add_child(new MeshInstance3D(ref_box_mesh));
+        tank->add_child(new MeshInstance3D(1.5f, 0.0f, 0.0f, ref_box_mesh));
         // tank->rotate_x(45);
         tank->rotate_y(45);
         // tank->rotate_z(45);
+
+        Camera3D *camera = new Camera3D(0, 0, 5);
+        tank->add_child(camera);
+        camera->rotate_x(20);
+        tank->translate(0.5, 0, 0); 
     }
 
 

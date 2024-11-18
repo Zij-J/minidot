@@ -4,6 +4,7 @@
 #define VIEWPORT_H
 
 #include "node.h"
+#include "camera_3d.h"
 #include "../math/transform_2d.h"
 #include "../math/transform_3d.h"
 #include "../config/project_setting.h"
@@ -23,8 +24,19 @@ public:
     const Transform3D &get_view_transform_2d() const {
         return view_transform_2d;
     }
-    
+
+    void register_camera_3d(Camera3D *camera) {
+        camera_3d = camera;
+    }
+    Camera3D *get_camera_3d() const {
+        return camera_3d;
+    }
+    void remove_camera_3d(Camera3D *camera) {
+        camera_3d = nullptr;
+    }
+
 private:    
+    Camera3D *camera_3d = nullptr;
 
     Transform2D canva_transform = {
         .basis_x = {.x = 2.0f / static_cast<float>(ProjectSetting::get_singleton().design_width), .y = 0},

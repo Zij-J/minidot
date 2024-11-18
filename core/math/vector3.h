@@ -9,7 +9,7 @@ struct Vector3 {
     float x;
     float y;
     float z;
-
+    
     const Vector3 &operator+=(const Vector3 &input) {
         x += input.x;
         y += input.y;
@@ -23,10 +23,31 @@ struct Vector3 {
         return *this;
     }
 
+    // Vector3 &operator-() { // can't invert `const`...
+    //     x = -x;
+    //     y = -y;
+    //     z = -z;
+    //     return *this;
+    // }
+
+    const Vector3 &operator-=(const Vector3 &input) {
+        x -= input.x;
+        y -= input.y;
+        z -= input.z;
+        return *this;
+    }
+
     template <typename Type>
     Vector3 operator+(const Type &right) const {
         Vector3 result = *this;
         result += right;
+        return result;  // copy elision do things
+    }
+
+    template <typename Type>
+    Vector3 operator-(const Type &right) const {
+        Vector3 result = *this;
+        result -= right;
         return result;  // copy elision do things
     }
 

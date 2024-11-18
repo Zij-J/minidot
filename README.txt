@@ -158,7 +158,9 @@
         - 原本就是 public 了!
         - 除了 main 其他 scope 都能使 Ref 正確被 free, 所以決定維持 "先創 ArrayMesh > 給 Ref<Mesh> > 給 MeshInstance" 模式
             - main 可以手動多加 scope 解決此問題
-[] camera
-    [] server: camera setting > 3D > glLookAt+Orth2D > 2D 
+[V] camera3D
+    [V] server: camera setting > 3D > glLookAt+Orth2D > 2D 
+    - no 2D, yet!
+[] BoxMesh
 ---- (fast hw2) ----
 [] Input Callback

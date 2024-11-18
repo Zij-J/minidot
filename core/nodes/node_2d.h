@@ -4,7 +4,6 @@
 #define NODE_2D_H
 
 #include "node.h"
-#include "viewport.h"
 #include "../math/vector2i.h"
 #include "../math/transform_2d.h"
 

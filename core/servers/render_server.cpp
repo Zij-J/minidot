@@ -1,7 +1,6 @@
 #include "render_server.h"
+#include "../debugger/code_tester.h"
 
-#include "../nodes/viewport.h"
-#include <typeinfo> // `typeid` keyword for C# `is` like behavior
 #include <GL/glut.h> // for swap buffer
 #include <GL/glu.h> // for reset camera
 #include <GL/gl.h> // for reset camera
@@ -92,28 +91,38 @@ void RenderServer::redraw() {
     //     now_texture = now_texture->next;
     // }
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0f, static_cast<double>(ProjectSetting::get_singleton().window_width) / static_cast<double>(ProjectSetting::get_singleton().window_height), 0.1f, 10.0f); // view angle 60 degree,
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(2, 2, 2, 0, 0, 0, 0, 1, 0); // eye at (0, 0, 1), look at (0, 0, 0), up is (0, 1, 0)
 
-    // draw 3D first (really only has Mesh)
-    DrawingMesh3D *now_mesh = static_cast<DrawingMesh3D *>(mesh_list_3d->next);
-    while (now_mesh != nullptr) {
-        now_mesh->mesh->draw(now_mesh->containing_node->get_object_transform()); // expend `draw_by` to reduce function call
-        now_mesh = static_cast<DrawingMesh3D *>(now_mesh->next);
+    // draw 3D first (only has Mesh)
+    if (root->get_camera_3d() != nullptr) {
+        
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(60.0f, static_cast<double>(ProjectSetting::get_singleton().window_width) / static_cast<double>(ProjectSetting::get_singleton().window_height), 0.1f, 10.0f); // view angle 60 degree,
+        
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        const Transform3D &camera_transform = root->get_camera_3d()->get_object_transform();
+        Vector3 look_at_point = camera_transform.origin_offset - camera_transform.basis_z; // look at vector `camera -z` => look at point = `camera_pos` - `camera -z`
+        gluLookAt(camera_transform.origin_offset.x, camera_transform.origin_offset.y, camera_transform.origin_offset.z,  // eye at `camera_pos`
+                look_at_point.x, look_at_point.y, look_at_point.z,
+                camera_transform.basis_y.x, camera_transform.basis_y.y, camera_transform.basis_y.z);  // up is `camera +y`
+
+
+        DrawingMesh3D *now_mesh = static_cast<DrawingMesh3D *>(mesh_list_3d->next);
+        while (now_mesh != nullptr) {
+            now_mesh->mesh->draw(now_mesh->containing_node->get_object_transform()); // expend `draw_by` to reduce function call
+            now_mesh = static_cast<DrawingMesh3D *>(now_mesh->next);
+        }
+
+
+        // reset camera
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(-1, 1, -1, 1); // origin OpenGL setting
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); // eye at (0, 0, 1), look at (0, 0, 0), up is (0, 1, 0)
     }
-
-
-    // reset camera
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-1, 1, -1, 1); // origin OpenGL setting
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); // eye at (0, 0, 1), look at (0, 0, 0), up is (0, 1, 0)
 
     // draw 2D in front
     DrawingObject *now_object = mesh_list_2d->next;

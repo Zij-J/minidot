@@ -18,8 +18,8 @@ public:
     mesh(mesh), 
     server_mesh(RenderServer::get_singleton().new_mesh_instance_3d(mesh, this)) {}   
 
-    MeshInstance3D(float x, float y, Ref<Mesh> mesh)
-    : Node3D(x, y),
+    MeshInstance3D(float x, float y, float z, Ref<Mesh> mesh)
+    : Node3D(x, y, z),
     mesh(mesh), 
     server_mesh(RenderServer::get_singleton().new_mesh_instance_3d(mesh, this)) {}  
     

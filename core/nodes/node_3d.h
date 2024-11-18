@@ -4,7 +4,6 @@
 #define NODE_3D_H
 
 #include "node.h"
-#include "viewport.h"
 #include "../math/vector2i.h"
 #include "../math/transform_3d.h"
 
