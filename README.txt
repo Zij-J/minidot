@@ -146,5 +146,13 @@
     - RefCounted 一定要 Ref (Ref has a `Type`) 才行，不可能有 class 能同時 "只有 counter + pointer" / "有整個 class data member"，畢竟**變數一下去整個 data member 一定要 malloc 好**，`Type` is a/has a RefCount 不可行。
     - Godot 中 RefCounted 這個 base 感覺很沒用，所以我只實作 Ref
 [V] Node3D
+[V] moving & rotate
 [] MeshInstance3D
+    [] server: 3D > glLookAt > 2D 
+    [] add mesh in 3D (remove mesh 2D/3D in one function)
+    [] render 
+    [] moving & rotate
+[] camera
+    [] server: camera setting > 3D > glLookAt > 2D 
+---- (fast hw2) ----
 [] Input Callback

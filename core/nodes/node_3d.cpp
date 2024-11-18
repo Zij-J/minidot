@@ -1,6 +1,11 @@
 #include "node_3D.h"
 
 
+void Node3D::set_local_transform(const Transform3D &setting_local_transform) {
+    local_transform = setting_local_transform;
+    _prograte_transform_change();
+}
+
 
 // traverse down, setting all dirty bits
 void Node3D::_prograte_transform_change() {

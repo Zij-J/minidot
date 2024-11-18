@@ -11,7 +11,7 @@ bool RenderServer::is_deleting = false; // singleton deletion by destructor will
 
 
 // default: ~~TODO: adding in tree order~~, then let OpenGL do sorting  
-const RenderServer::DrawingMesh *RenderServer::new_mesh_instance(Ref<Mesh> mesh, Node3D *containing_node) { 
+const RenderServer::DrawingMesh *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, Node3D *containing_node) { 
     DrawingMesh *new_mesh = new DrawingMesh((DrawingMesh){ 
         .mesh = mesh,
         .containing_node = containing_node, 
@@ -20,9 +20,9 @@ const RenderServer::DrawingMesh *RenderServer::new_mesh_instance(Ref<Mesh> mesh,
     });
 
     // just add in list, let OpenGL do the sorting
-    new_mesh->before = mesh_list;
-    new_mesh->next = mesh_list->next;
-    mesh_list->next = new_mesh;
+    new_mesh->before = mesh_list_2d;
+    new_mesh->next = mesh_list_2d->next;
+    mesh_list_2d->next = new_mesh;
 
     return new_mesh;
 }
@@ -84,9 +84,14 @@ void RenderServer::redraw() {
     //     now_texture->texture->draw(*now_texture->global_position);
     //     now_texture = now_texture->next;
     // }
-    DrawingMesh *now_mesh = mesh_list->next;
+
+
+    // draw 3D first
+
+    // draw 2D in front
+    DrawingMesh *now_mesh = mesh_list_2d->next;
     while (now_mesh != nullptr) {
-        now_mesh->mesh->draw(root->get_view_transform() * now_mesh->containing_node->get_object_transform());
+        now_mesh->mesh->draw(root->get_view_transform_2d() * now_mesh->containing_node->get_object_transform());
         now_mesh = now_mesh->next;
     }
 

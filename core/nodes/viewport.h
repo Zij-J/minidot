@@ -20,8 +20,8 @@ public:
     }
 
     // default: orthogonal projection, whole design width/height
-    const Transform3D &get_view_transform() const {
-        return view_transform;
+    const Transform3D &get_view_transform_2d() const {
+        return view_transform_2d;
     }
     
 private:    
@@ -32,12 +32,19 @@ private:
         .origin_offset = {.x = -1, .y = 1},
     };
 
-    Transform3D view_transform = {
+    Transform3D view_transform_2d = {
         .basis_x = {.x = 2.0f / static_cast<float>(ProjectSetting::get_singleton().design_width), .y = 0, .z = 0},
         .basis_y = {.x = 0, .y = -2.0f / static_cast<float>(ProjectSetting::get_singleton().design_height), .z = 0}, // y is flipped!
         .basis_z = {.x = 0, .y = 0, .z = 1},
         .origin_offset = {.x = -1, .y = 1, .z = 0},
     };
+
+    // Transform3D view_transform = { // in 3D
+    //     .basis_x = {.x = 1, .y = 0, .z = 0},
+    //     .basis_y = {.x = 0, .y = 1, .z = 0},
+    //     .basis_z = {.x = 0, .y = 0, .z = 1},
+    //     .origin_offset = {.x = -1, .y = 1, .z = 0},
+    // };
 };
 
 

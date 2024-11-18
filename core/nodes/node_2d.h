@@ -10,18 +10,11 @@
 
 class Node2D: public Node {    
 public:
+
     Node2D(float x = 0, float y = 0): local_transform((Transform2D){.basis_x = {.x = 1, .y = 0}, .basis_y = {.x = 0, .y = 1}, .origin_offset = {.x = x, .y = y}}) { // copy elision do things
         tree_entered.add_listener<Node2D, on_tree_entered>(this);
     }
     ~Node2D() {}
-
-    void on_tree_entered() {
-        // const_cast hacks(Godot uses too), be sure ALL Node2D aren't const!
-        parent_cache = const_cast<Node2D *>(dynamic_cast<const Node2D *>(this->get_parent()));  // not direct inhertance checking(e.g. MeshInstance2D is Node2D), need dynamic_cast
-        if (parent_cache != nullptr) {  // not root
-            parent_cache->children_cache.push_back(this);   // `dynamic_cast` children too time consuming? how about rebuild the tree again, Node2D only tree!
-        }
-    }
     
     // or so called `get_global_transform`
     const Transform2D &get_object_transform() {
@@ -51,6 +44,12 @@ public:
         }
         return global_transform;
     }
+
+    void on_tree_entered();
+
+    void translate(float x, float y);
+    void rotate(float degree);
+
 
 protected:
     Node2D *parent_cache = nullptr;

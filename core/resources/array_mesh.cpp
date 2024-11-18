@@ -2,7 +2,6 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 
-
 void ArrayMesh::draw(const Transform3D &final_transform) const {
     // draw only when has triangle
     if (points.size() < 3) {

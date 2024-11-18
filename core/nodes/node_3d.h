@@ -10,6 +10,8 @@
 
 class Node3D: public Node {    
 public:
+    Delegate transform_changed; // emit when global transform really changed
+
     Node3D(float x = 0, float y = 0, float z = 0)
     : local_transform( (Transform3D){
         .basis_x = {.x = 1, .y = 0, .z = 0}, 
@@ -53,9 +55,13 @@ public:
                 global_transform = parent_cache->get_object_transform() * local_transform;
             }
             is_global_transform_dirty = false;
+            transform_changed.notify();
         }
         return global_transform;
     }
+
+
+    void set_local_transform(const Transform3D &setting_local_transform);
 
 
 protected:

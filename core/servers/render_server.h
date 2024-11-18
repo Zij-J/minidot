@@ -50,7 +50,7 @@ public:
     //     now_texture->next = new_texture;
     // }
 
-    const DrawingMesh *new_mesh_instance(Ref<Mesh> mesh, Node3D *containing_node);
+    const DrawingMesh *new_mesh_instance_2d(Ref<Mesh> mesh, Node3D *containing_node);
     void delete_mesh_instance(const DrawingMesh *mesh);
 
     void redraw();
@@ -69,11 +69,13 @@ private:
 
     Viewport *root = nullptr; 
     // DrawingTexture *texture_list = new DrawingTexture;  // head noded list
-    DrawingMesh *mesh_list = new DrawingMesh;           // head noded list
+    DrawingMesh *mesh_list_2d = new DrawingMesh;           // all drawables in 2D
+    DrawingMesh *mesh_list_3d = new DrawingMesh;           // all drawables in 3D
 
     RenderServer(Viewport *root): root(root) {
         // texture_list->next = nullptr;
-        mesh_list->next = nullptr;
+        mesh_list_2d->next = nullptr;
+        mesh_list_3d->next = nullptr;
     }
 };
 

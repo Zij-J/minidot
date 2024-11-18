@@ -5,38 +5,63 @@
 #ifndef DELEGATE_H
 #define DELEGATE_H
 
+#define DELEGATE_MAX 4
 
 class Delegate
 {
 public:
     typedef void (*internal_function_pointer)(void *); // use (void *) to receive all type of instance
 
-    Delegate() {}
+    Delegate() {
+        internal_notify_function[0] = nullptr; // for `nothing` detection
+    }
     ~Delegate() {}
 
     // make delegate know the listener(function)
     template <void (*listener)(void)>
     void add_listener() {
-        internal_notify_function = &_internal_notify_delegate<listener>;
+        if (size >= DELEGATE_MAX) {
+            return ;
+        }
+
+        delegate_instance[size] = nullptr;
+        internal_notify_function[size] = &_internal_notify_delegate<listener>;
+        ++size;
     }
     // make delegate know the listener(member function)
     template <class C, void (C::*listener)(void)>
     void add_listener(C *listening_instacne) {
-        delegate_instance = listening_instacne;
-        internal_notify_function = &_internal_notify_delegate<C, listener>; 
+        if (size >= DELEGATE_MAX) {
+            return ;
+        }
+
+        delegate_instance[size] = listening_instacne;
+        internal_notify_function[size] = &_internal_notify_delegate<C, listener>; 
+        ++size;
     }
 
 
     // call the listener (if have)
     void notify() {
-        if (internal_notify_function != nullptr)
-            internal_notify_function(delegate_instance);
+        if (internal_notify_function[0] == nullptr) { // 90% will be nullptr, can skip lots of init
+            return ;
+        }
+
+        internal_notify_function[0](delegate_instance[0]);
+        for (int i = 1; i < size; ++i) {
+            if (internal_notify_function[i] == nullptr) {
+                return ;
+            }
+            internal_notify_function[i](delegate_instance[i]);
+        }
     }
 
 
 private:
-    void *delegate_instance = nullptr;
-    internal_function_pointer internal_notify_function = nullptr; 
+    void *delegate_instance[DELEGATE_MAX];
+    internal_function_pointer internal_notify_function[DELEGATE_MAX]; 
+
+    int size = 0;
 
 
     template <void (*listener)(void)> // for normal function
