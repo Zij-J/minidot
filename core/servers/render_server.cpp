@@ -95,6 +95,7 @@ void RenderServer::redraw() {
     // draw 3D first (only has Mesh)
     if (root->get_camera_3d() != nullptr) {
         
+        glEnable(GL_LIGHTING); // has light 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluPerspective(60.0f, static_cast<double>(ProjectSetting::get_singleton().window_width) / static_cast<double>(ProjectSetting::get_singleton().window_height), 0.1f, 10.0f); // view angle 60 degree,
@@ -116,6 +117,7 @@ void RenderServer::redraw() {
 
 
         // reset camera
+        glDisable(GL_LIGHTING); // 2D no light
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluOrtho2D(-1, 1, -1, 1); // origin OpenGL setting

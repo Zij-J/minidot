@@ -161,7 +161,11 @@
 [V] camera3D
     [V] server: camera setting > 3D > glLookAt+Orth2D > 2D 
     - no 2D, yet!
-[] BoxMesh
-[] PointLight
+    - **heavily OpenGL**
+[V] BoxMesh
+[V] PointLight
+    - **重要假設**: 所有 Node 進入 tree 都是只進不出 (除非被 free)
+        - if 沒有此，需要 `on_tree_exit`, 在 camera, light, node3d/node2d 的 cache 都要加對應處理  
+    - **heavily OpenGL**
 ---- (fast hw2) ----
 [] Input Callback

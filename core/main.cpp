@@ -8,6 +8,7 @@
 #include "nodes/viewport.h"
 #include "nodes/sprite_2d.h"
 #include "nodes/camera_3d.h"
+#include "nodes/point_light.h"
 #include "resources/point_mesh.h" 
 #include "resources/line_mesh.h" 
 #include "resources/array_mesh.h" 
@@ -41,6 +42,8 @@ int main(int argc, char **argv) {
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
+
+    glEnable(GL_COLOR_MATERIAL);  // when light, glColor become material
 
 
     // game init
@@ -109,6 +112,9 @@ int main(int argc, char **argv) {
         camera->translate(0.0f, 1.0f, 0);
         camera->rotate_x(-30.0f);
         tank->translate(0.5, 0, 0); 
+
+
+        tank->add_child(new PointLight(0.0f, 0.0f, 0.0f, (Color){.r = 0, .g = 1, .b = 1}));
     }
 
 
