@@ -3,6 +3,8 @@
 #include "../nodes/viewport.h"
 #include <typeinfo> // `typeid` keyword for C# `is` like behavior
 #include <GL/glut.h> // for swap buffer
+#include <GL/glu.h> // for reset camera
+#include <GL/gl.h> // for reset camera
 
 RenderServer *RenderServer::singleton = nullptr;
 bool RenderServer::is_deleting = false; // singleton deletion by destructor will call twice, must avoid delete `nullptr` 
@@ -16,6 +18,18 @@ const RenderServer::DrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> 
     new_mesh->before = mesh_list_2d;
     new_mesh->next = mesh_list_2d->next;
     mesh_list_2d->next = new_mesh;
+
+    return new_mesh;
+}
+
+
+// really just add in list, let OpenGL do the sorting
+const RenderServer::DrawingObject *RenderServer::new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node) { 
+    DrawingMesh3D *new_mesh = new DrawingMesh3D(mesh, containing_node);
+
+    new_mesh->before = mesh_list_3d;
+    new_mesh->next = mesh_list_3d->next;
+    mesh_list_3d->next = new_mesh;
 
     return new_mesh;
 }
@@ -78,8 +92,28 @@ void RenderServer::redraw() {
     //     now_texture = now_texture->next;
     // }
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0f, static_cast<double>(ProjectSetting::get_singleton().window_width) / static_cast<double>(ProjectSetting::get_singleton().window_height), 0.1f, 10.0f); // view angle 60 degree,
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(2, 2, 2, 0, 0, 0, 0, 1, 0); // eye at (0, 0, 1), look at (0, 0, 0), up is (0, 1, 0)
 
-    // draw 3D first
+    // draw 3D first (really only has Mesh)
+    DrawingMesh3D *now_mesh = static_cast<DrawingMesh3D *>(mesh_list_3d->next);
+    while (now_mesh != nullptr) {
+        now_mesh->mesh->draw(now_mesh->containing_node->get_object_transform()); // expend `draw_by` to reduce function call
+        now_mesh = static_cast<DrawingMesh3D *>(now_mesh->next);
+    }
+
+
+    // reset camera
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1, 1, -1, 1); // origin OpenGL setting
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); // eye at (0, 0, 1), look at (0, 0, 0), up is (0, 1, 0)
 
     // draw 2D in front
     DrawingObject *now_object = mesh_list_2d->next;
@@ -105,4 +139,10 @@ void RenderServer::DrawingMesh2D::draw_by(const Viewport &drawing_viewport) {
 
     // draw
     mesh->draw(drawing_viewport.get_view_transform_2d() * final_transform);
+}
+
+
+void RenderServer::DrawingMesh3D::draw_by(const Viewport &drawing_viewport) {
+    // mesh->draw(drawing_viewport.get_view_transform() * containing_node->get_object_transform());
+    mesh->draw(containing_node->get_object_transform()); // let openGL do camera_transform + projection_transform 
 }

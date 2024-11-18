@@ -18,13 +18,7 @@ public:
     Ref(VarArgs... params): counter(new int(1)), object(new Type(params...)) {} // construct object 
 
     Ref(Ref& origin) { // copy construct (shadow copy reference)
-        if (object != nullptr) {
-            _unref();        
-        }
-
-        counter = origin.counter;
-        object = origin.object;
-        ++*counter;
+        _ref(origin);
     }
 
     ~Ref() {
@@ -41,13 +35,7 @@ public:
     //     object = origin.object;
     // }
     void operator=(const Ref& origin) { // reassign (copy construct, shadow copy reference)
-        if (object != nullptr) {
-            _unref();        
-        }
-
-        counter = origin.counter;
-        object = origin.object;
-        ++*counter;
+        _ref(origin);
     }
 
     Type &operator*() const { // using `*` to get object
@@ -69,6 +57,16 @@ private:
             delete object;
             DEBUG_COUT("clear");
         }
+    }
+    
+    void _ref(Ref& origin) {
+        if (object != nullptr) {
+            _unref();        
+        }
+
+        counter = origin.counter;
+        object = origin.object;
+        ++*counter;
     }
 };
 

@@ -4,7 +4,6 @@
 #define MESH_INSTANCE_2D_H
 
 #include "node_2d.h"
-#include "node_3d.h"
 #include "../templates/ref.h"
 #include "../resources/mesh.h"
 #include "../servers/render_server.h"

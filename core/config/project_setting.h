@@ -3,13 +3,12 @@
 #ifndef PROJECT_SETTING_H
 #define PROJECT_SETTING_H
 
-#include "../math/transform_3d.h"
 
 class ProjectSetting {
 public:
-    const char *window_name = "My Persona 0.6 UI";
-    const int window_width = 960; // width/height = 16/9
-    const int window_height;
+    const char *window_name = "Tank Fight!";
+    int window_width = 960; // width/height = 16/9
+    int window_height;
 
     const int design_width = 1920; 
     const int design_height; 

@@ -41,7 +41,7 @@ endif
 # First off, make all .o be depended(generated) and linked to form .EXE
 # $@: the target, $^: "all" dependencies, @ in front of a line surpress printing the line
 $(EXE): $(OUTS)
-	g++ $(FLAGS) -o $@ $^ $(GLUT_LIB_ARGU) -l$(USING_GLUT) -lopengl32
+	g++ $(FLAGS) -o $@ $^ $(GLUT_LIB_ARGU) -l$(USING_GLUT) -lopengl32 -lglu32
 	@echo $(BEEP)  
 
 

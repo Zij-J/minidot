@@ -56,6 +56,7 @@ public:
     // }
 
     const DrawingObject *new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node);
+    const DrawingObject *new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node);
     void delete_drawing_object(const DrawingObject *mesh);
 
     void redraw();
@@ -87,7 +88,7 @@ private:
         DrawingMesh3D(Ref<Mesh> mesh, Node3D *containing_node): mesh(mesh), containing_node(containing_node) {}
         ~DrawingMesh3D() {}
 
-        void draw_by(const Viewport &drawing_viewport) {} // TODO
+        void draw_by(const Viewport &drawing_viewport);
     };
 
 

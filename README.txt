@@ -59,7 +59,6 @@
         - 推測不是 performance critical + 讓程式簡潔，所以醬
         - 我拒絕! 我愛 iterative!
 [] Viewport 2D > 3D (to camera coordinate > project transform)
-    [] camera3D
     [] project transform(相對 camera position + perspective projection) 存在 Viewport, 用在 RenderServer
     - 手刻參考: https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling + 姚智原教授的 OpenGL 課本(2019 買的 2018 出版書)
         - 沒有實踐 Frustum-Culling (Godot 有 AABB 系統，我沒有又懶了刻...)
@@ -147,15 +146,19 @@
     - Godot 中 RefCounted 這個 base 感覺很沒用，所以我只實作 Ref
 [V] Node3D
 [V] moving & rotate
-[] MeshInstance3D
-    [] server: 3D > glLookAt > 2D 
+[V] MeshInstance3D
+    [V] server: 3D > glLookAt+Orth2D > 2D 
         - 2D 守 tree order 3D 不用，必須分開
         - 都分開了，那能特殊處理 2D 的 Mesh? Ans: 可以!
             - 哈! 當時從沒想到分開，是最簡單&最實際的，大人果然比較厲害!
-    [] add mesh in 3D (remove mesh 2D/3D in one function)
-    [] render 
-    [] moving & rotate
+    [V] add mesh in 3D (remove mesh 2D/3D in one function)
+    [V] render 
+    [V] moving & rotate
+    [V] get mesh (modifiable, for Ref)
+        - 原本就是 public 了!
+        - 除了 main 其他 scope 都能使 Ref 正確被 free, 所以決定維持 "先創 ArrayMesh > 給 Ref<Mesh> > 給 MeshInstance" 模式
+            - main 可以手動多加 scope 解決此問題
 [] camera
-    [] server: camera setting > 3D > glLookAt > 2D 
+    [] server: camera setting > 3D > glLookAt+Orth2D > 2D 
 ---- (fast hw2) ----
 [] Input Callback

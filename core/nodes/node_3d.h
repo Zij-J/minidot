@@ -19,14 +19,6 @@ public:
         tree_entered.add_listener<Node3D, on_tree_entered>(this);
     }
     ~Node3D() {}
-
-    void on_tree_entered() {
-        // const_cast hacks(Godot uses too), be sure ALL Node3D aren't const!
-        parent_cache = const_cast<Node3D *>(dynamic_cast<const Node3D *>(this->get_parent()));  // not direct inhertance checking(e.g. MeshInstance3D is Node3D), need dynamic_cast
-        if (parent_cache != nullptr) {  // not root
-            parent_cache->children_cache.push_back(this);   // `dynamic_cast` children too time consuming? how about rebuild the tree again, Node3D only tree!
-        }
-    }
     
     // or so called `get_global_transform`
     const Transform3D &get_object_transform() {
@@ -57,7 +49,12 @@ public:
         return global_transform;
     }
 
+    void on_tree_entered();
 
+    void translate(float x, float y, float z);
+    void rotate_x(float degree);
+    void rotate_y(float degree);
+    void rotate_z(float degree);
 
 protected:
     Node3D *parent_cache = nullptr;
