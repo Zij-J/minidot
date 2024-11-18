@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
     // Node *world = new Node2D(1000, 100);
     Node2D *a = new Node2D();
     a->translate(700, 0);
-    a->rotate(90);
     
     root.add_child(a);
     root.add_child(new Node);
@@ -65,7 +64,7 @@ int main(int argc, char **argv) {
     array_mesh->points.push_back({.x = 100, .y = 0});
     MeshInstance2D *b = new MeshInstance2D(array_mesh);
     root.add_child(b);
-    // b->rotate(45);
+    // b->rotate(30);
 
     ArrayMesh *array_mesh2 = new ArrayMesh();
     array_mesh2->points.push_back({.x = 0, .y = 100});

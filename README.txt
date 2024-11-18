@@ -149,6 +149,9 @@
 [V] moving & rotate
 [] MeshInstance3D
     [] server: 3D > glLookAt > 2D 
+        - 2D 守 tree order 3D 不用，必須分開
+        - 都分開了，那能特殊處理 2D 的 Mesh? Ans: 可以!
+            - 哈! 當時從沒想到分開，是最簡單&最實際的，大人果然比較厲害!
     [] add mesh in 3D (remove mesh 2D/3D in one function)
     [] render 
     [] moving & rotate

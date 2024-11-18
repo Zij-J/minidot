@@ -2,7 +2,6 @@
 #include "../math/math_defs.h"
 #include <math.h>
 
-
 void Node2D::on_tree_entered() {
     // const_cast hacks(Godot uses too), be sure ALL Node2D aren't const!
     parent_cache = const_cast<Node2D *>(dynamic_cast<const Node2D *>(this->get_parent()));  // not direct inhertance checking(e.g. MeshInstance2D is Node2D), need dynamic_cast
@@ -19,7 +18,7 @@ void Node2D::translate(float x, float y) {
     _prograte_transform_change();
 }
 
-// counter clock wise
+// counter clock wise(+y up), clock wise(+y down)
 void Node2D::rotate(float degree) {
     float radius = degree / 360.0f * Math_TAU;
     Vector2 rotate_x = {.x = cos(radius), .y = sin(radius)};

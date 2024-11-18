@@ -1,8 +1,6 @@
 #include "render_server.h"
 
 #include "../nodes/viewport.h"
-#include "../nodes/sprite_2d.h"
-#include "../nodes/mesh_instance_2d.h"
 #include <typeinfo> // `typeid` keyword for C# `is` like behavior
 #include <GL/glut.h> // for swap buffer
 
@@ -11,13 +9,8 @@ bool RenderServer::is_deleting = false; // singleton deletion by destructor will
 
 
 // default: ~~TODO: adding in tree order~~, then let OpenGL do sorting  
-const RenderServer::DrawingMesh *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, Node3D *containing_node) { 
-    DrawingMesh *new_mesh = new DrawingMesh((DrawingMesh){ 
-        .mesh = mesh,
-        .containing_node = containing_node, 
-        .before = nullptr,
-        .next = nullptr,
-    });
+const RenderServer::DrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node) { 
+    DrawingMesh2D *new_mesh = new DrawingMesh2D(mesh, containing_node);
 
     // just add in list, let OpenGL do the sorting
     new_mesh->before = mesh_list_2d;
@@ -28,7 +21,7 @@ const RenderServer::DrawingMesh *RenderServer::new_mesh_instance_2d(Ref<Mesh> me
 }
 
 
-void RenderServer::delete_mesh_instance(const DrawingMesh *mesh) { 
+void RenderServer::delete_drawing_object(const DrawingObject *mesh) { 
     mesh->before->next = mesh->next;
     if (mesh->next != nullptr) {
         mesh->next->before = mesh->before;
@@ -61,10 +54,10 @@ void RenderServer::redraw() {
 
     //         // -> 3D world coordinate (mesh)
     //         Transform3D final_transform = {
-    //             .basis_x = (Vector3){.x = static_cast<float>(object_transform_2d.basis_x.x), .y = static_cast<float>(object_transform_2d.basis_x.y), .z = 0}, 
-    //             .basis_y = (Vector3){.x = static_cast<float>(object_transform_2d.basis_y.x), .y = static_cast<float>(object_transform_2d.basis_y.y), .z = 0}, 
+    //             .basis_x = (Vector3){.x = object_transform_2d.basis_x.x), .y = object_transform_2d.basis_x.y), .z = 0}, 
+    //             .basis_y = (Vector3){.x = object_transform_2d.basis_y.x), .y = object_transform_2d.basis_y.y), .z = 0}, 
     //             .basis_z = (Vector3){.x = 0, .y = 0, .z = 0},   // project to z = 0
-    //             .origin_offset = (Vector3){.x = static_cast<float>(object_transform_2d.origin_offset.x), .y = static_cast<float>(object_transform_2d.origin_offset.y), .z = 0}
+    //             .origin_offset = (Vector3){.x = object_transform_2d.origin_offset.x), .y = object_transform_2d.origin_offset.y), .z = 0}
     //         };
 
     //         // -> 2D viewport coordinate (camera)
@@ -89,13 +82,27 @@ void RenderServer::redraw() {
     // draw 3D first
 
     // draw 2D in front
-    DrawingMesh *now_mesh = mesh_list_2d->next;
-    while (now_mesh != nullptr) {
-        now_mesh->mesh->draw(root->get_view_transform_2d() * now_mesh->containing_node->get_object_transform());
-        now_mesh = now_mesh->next;
+    DrawingObject *now_object = mesh_list_2d->next;
+    while (now_object != nullptr) {
+        now_object->draw_by(*root);
+        now_object = now_object->next;
     }
 
     glutSwapBuffers();  // swap back buffer to front
 }
 
 
+void RenderServer::DrawingMesh2D::draw_by(const Viewport &drawing_viewport) {
+    // 2D world coordinate (Node2D)
+    Transform2D object_transform_2d = containing_node->get_object_transform();
+    // to 3D
+    Transform3D final_transform = {
+        .basis_x = (Vector3){.x = object_transform_2d.basis_x.x, .y = object_transform_2d.basis_x.y, .z = 0}, 
+        .basis_y = (Vector3){.x = object_transform_2d.basis_y.x, .y = object_transform_2d.basis_y.y, .z = 0}, 
+        .basis_z = (Vector3){.x = 0, .y = 0, .z = 0},   // project to z = 0
+        .origin_offset = (Vector3){.x = object_transform_2d.origin_offset.x, .y = object_transform_2d.origin_offset.y, .z = 0}
+    };
+
+    // draw
+    mesh->draw(drawing_viewport.get_view_transform_2d() * final_transform);
+}
