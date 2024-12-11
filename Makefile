@@ -6,7 +6,7 @@
 SOURCES := $(wildcard */*.cpp */*/*.cpp */*/*/*.cpp)
 OUTS := $(addsuffix .o, $(basename $(SOURCES)))
 DEPS := $(addsuffix .d, $(basename $(SOURCES)))
-EXE := hw2
+EXE := final
 
 # compiler flags
 FLAGS := -O -Wall # optimize a little 

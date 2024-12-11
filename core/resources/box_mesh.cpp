@@ -35,7 +35,7 @@ void BoxMesh::draw(const Transform3D &final_transform) const {
     //     Vector3{-1.f, 1.f, -1.f},    // Back-top-left: 6
     //     Vector3{-1.f, -1.f, 1.f},    // Front-bottom-left: 0
     //     Vector3{-1.f, -1.f, -1.f},   // Back-bottom-left: 7
-    //     Vector3{1.f, -1.f, -1.f},    // Back-bottom-right: 1
+    //     Vector3{1.f, -1.f, -1.f},    // Back-bottom-right: 2
     //     Vector3{-1.f, 1.f, -1.f},    // Back-top-left: 6
     //     Vector3{1.f, 1.f, -1.f}      // Back-top-right: 4
     // };
@@ -50,7 +50,7 @@ void BoxMesh::draw(const Transform3D &final_transform) const {
         }
         glVertex3f(final_cube_strip[0].x, final_cube_strip[0].y, final_cube_strip[0].z); 
         glVertex3f(final_cube_strip[7].x, final_cube_strip[7].y, final_cube_strip[7].z); 
-        glVertex3f(final_cube_strip[1].x, final_cube_strip[1].y, final_cube_strip[1].z); 
+        glVertex3f(final_cube_strip[1].x, final_cube_strip[2].y, final_cube_strip[2].z); 
         glVertex3f(final_cube_strip[6].x, final_cube_strip[6].y, final_cube_strip[6].z); 
         glVertex3f(final_cube_strip[4].x, final_cube_strip[4].y, final_cube_strip[4].z); 
     glEnd();

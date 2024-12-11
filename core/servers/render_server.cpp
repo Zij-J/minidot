@@ -16,6 +16,9 @@ const RenderServer::DrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> 
     // just add in list, let OpenGL do the sorting
     new_mesh->before = mesh_list_2d;
     new_mesh->next = mesh_list_2d->next;
+    if (mesh_list_3d->next != nullptr) {
+        mesh_list_3d->next->before = new_mesh; 
+    }
     mesh_list_2d->next = new_mesh;
 
     return new_mesh;
@@ -96,6 +99,9 @@ void RenderServer::redraw() {
     if (root->get_camera_3d() != nullptr) {
         
         glEnable(GL_LIGHTING); // has light 
+        glEnable(GL_COLOR_MATERIAL);  // when light, glColor become material
+        glEnable(GL_DEPTH_TEST);  // Enable depth testing(sort by depth)
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluPerspective(60.0f, static_cast<double>(ProjectSetting::get_singleton().window_width) / static_cast<double>(ProjectSetting::get_singleton().window_height), 0.1f, 10.0f); // view angle 60 degree,
@@ -118,6 +124,8 @@ void RenderServer::redraw() {
 
         // reset camera
         glDisable(GL_LIGHTING); // 2D no light
+        glDisable(GL_COLOR_MATERIAL);  // 2D no need material
+        glDisable(GL_DEPTH_TEST);  // 2D no sort by depth
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluOrtho2D(-1, 1, -1, 1); // origin OpenGL setting

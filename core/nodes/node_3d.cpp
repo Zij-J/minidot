@@ -55,7 +55,13 @@ void Node3D::rotate_z(float degree) {
     _prograte_transform_change();
 }
 
+void Node3D::scale(float times) {
+    local_transform.basis_x *= times;
+    local_transform.basis_y *= times;
+    local_transform.basis_z *= times;
 
+    _prograte_transform_change();
+}
 
 // traverse down, setting all dirty bits
 void Node3D::_prograte_transform_change() {
@@ -65,7 +71,7 @@ void Node3D::_prograte_transform_change() {
     while (dfs_stack.size() != 0) {
         Node3D *now_node_3d = dfs_stack.pop_back();
         for (int i = now_node_3d->children_cache.size() - 1; i >= 0; --i) { // leaves quene
-            dfs_stack.push_back(children_cache[i]);
+            dfs_stack.push_back(now_node_3d->children_cache[i]);
         }
         now_node_3d->is_global_transform_dirty = true;
     }

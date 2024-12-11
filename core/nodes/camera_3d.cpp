@@ -20,7 +20,7 @@ Camera3D::~Camera3D() {
 void Camera3D::on_tree_entered() {
     is_entered_tree = true;
 
-    const Node *now_parent = parent_cache; // get closest viewport, register to it
+    const Node *now_parent = get_parent(); // get closest viewport, register to it
     while (now_parent != nullptr) {
         if (typeid(*now_parent).hash_code() == typeid(Viewport).hash_code()) {
             viewport = const_cast<Viewport *>(static_cast<const Viewport *>(now_parent)); // hack: const cast, Viewport must not be const!

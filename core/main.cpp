@@ -31,7 +31,7 @@ RenderServer render_server = RenderServer::initialize(&root);    // initializati
 int main(int argc, char **argv) {
 
     // glut init
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE); // rgb + double buffer + multi sample anti-aliasing
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE | GLUT_DEPTH); // rgb + double buffer + multi sample anti-aliasing + sort by depth
     glutInit(&argc, argv);  // init all glut internal stuff 
 
     glutInitWindowSize(ProjectSetting::get_singleton().window_width , ProjectSetting::get_singleton().window_height);

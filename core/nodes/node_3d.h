@@ -9,6 +9,7 @@
 
 class Node3D: public Node {    
 public:
+    Node3D(const Transform3D &local_transform): local_transform(local_transform) {}
     Node3D(float x = 0, float y = 0, float z = 0)
     : local_transform( (Transform3D){
         .basis_x = {.x = 1, .y = 0, .z = 0}, 
@@ -54,6 +55,7 @@ public:
     void rotate_x(float degree);
     void rotate_y(float degree);
     void rotate_z(float degree);
+    void scale(float times);
 
 protected:
     Node3D *parent_cache = nullptr;
