@@ -3,7 +3,7 @@
 
 
 # Detect all .cpp, turn into .o format and define .exe name
-SOURCES := $(wildcard */*.cpp */*/*.cpp */*/*/*.cpp)
+SOURCES := $(wildcard *.cpp */*.cpp */*/*.cpp */*/*/*.cpp)
 OUTS := $(addsuffix .o, $(basename $(SOURCES)))
 DEPS := $(addsuffix .d, $(basename $(SOURCES)))
 EXE := final
@@ -20,6 +20,7 @@ BEEP := 
 
 # =============== GLUT parameters ==================
 USING_GLUT := freeglut
+USING_GLEW := glew32
 # directory that contain `GL/glut.h` stuffs:
 GLUT_INCLUDE_ARGU := -I"./GLUT_env"
 # directory that contain `freeglut.lib.a`:
@@ -41,7 +42,7 @@ endif
 # First off, make all .o be depended(generated) and linked to form .EXE
 # $@: the target, $^: "all" dependencies, @ in front of a line surpress printing the line
 $(EXE): $(OUTS)
-	g++ $(FLAGS) -o $@ $^ $(GLUT_LIB_ARGU) -l$(USING_GLUT) -lopengl32 -lglu32
+	g++ $(FLAGS) -o $@ $^ $(GLUT_LIB_ARGU) -l$(USING_GLUT) -l$(USING_GLEW) -lopengl32 -lglu32
 	@echo $(BEEP)  
 
 

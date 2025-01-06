@@ -29,7 +29,7 @@ void PointLight::on_tree_entered() {
     ++total_light_count;
 
     // light on
-    GLfloat light_ambient[] = {0.01, 0.01, 0.01, 1.0}; // hard written ambient, alpha only for speical blending light
+    GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1.0}; // hard written ambient, alpha only for speical blending light
     glLightfv(GL_LIGHT0 + light_index, GL_AMBIENT, light_ambient);
     GLfloat light_diffuse[] = {color.r, color.b, color.b, 1.0}; // main contribution is diffuse, color is it!
     glLightfv(GL_LIGHT0 + light_index, GL_DIFFUSE, light_diffuse);

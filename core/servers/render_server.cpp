@@ -52,7 +52,7 @@ void RenderServer::redraw() {
     Vector<Node *> dfs_stack; // use pointers for C-ish fast vector
     dfs_stack.push_back(static_cast<Node *>(root));
 
-    glClear(GL_COLOR_BUFFER_BIT); // clear back buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear back buffer & depth buffer
 
     // draw with depth first search + leaves quene order
     // while (dfs_stack.size() != 0) {
