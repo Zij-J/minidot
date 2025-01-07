@@ -17,7 +17,8 @@ void main() {
 
         // Diffuse component
         float diff = max(dot(normalize(vertexNormal), normalize(vertexToLight[i])), 0.0);
-        vec4 diffuse = diff * gl_LightSource[i].diffuse * vertexColor;
+        float threshold_diff = smoothstep(0.245, 0.255, diff);      // cel shading! by threshold 25.5 & smooth interpolation between 0.245 to 0.255 
+        vec4 diffuse = threshold_diff * gl_LightSource[i].diffuse * vertexColor;
 
         // Specular component
         // vec3 viewDir = normalize(-fragVertexPos);  // View direction in eye space

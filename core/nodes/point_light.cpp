@@ -12,8 +12,11 @@ int PointLight::total_light_count = 0;
 PointLight::PointLight(): server_light(RenderServer::get_singleton().new_light_3d(this)) {
     tree_entered.add_listener<PointLight, on_tree_entered>(this);
 }
-PointLight::PointLight(float x, float y, float z, Color color): 
+PointLight::PointLight(float x, float y, float z, Color color, float ambient, float diffuse, float specular): 
 Node3D(x, y, z),
+ambient(ambient),
+diffuse(diffuse),
+specular(specular),
 color(std::move(color)),
 server_light(RenderServer::get_singleton().new_light_3d(this)) {
     tree_entered.add_listener<PointLight, on_tree_entered>(this);
@@ -36,11 +39,11 @@ void PointLight::on_tree_entered() {
 
 // light on, must update in every frame to ma
 void PointLight::draw_light() {
-    GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1.0}; // hard written ambient, alpha only for speical blending light
+    GLfloat light_ambient[] = {color.r * ambient, color.g * ambient, color.b * ambient, 1.0}; // hard written ambient, alpha only for speical blending light
     glLightfv(GL_LIGHT0 + light_index, GL_AMBIENT, light_ambient);
-    GLfloat light_diffuse[] = {color.r, color.b, color.b, 1.0}; // main contribution is diffuse, color is it!
+    GLfloat light_diffuse[] = {color.r * diffuse, color.g * diffuse, color.b * diffuse, 1.0}; // main contribution is diffuse, color is it!
     glLightfv(GL_LIGHT0 + light_index, GL_DIFFUSE, light_diffuse);
-    GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // hard written specular(specular kinda hard to see, make it as strong as possible)
+    GLfloat light_specular[] = {color.r * specular, color.g * specular, color.b * specular, 1.0}; // hard written specular(specular kinda hard to see, make it as strong as possible)
     glLightfv(GL_LIGHT0 + light_index, GL_SPECULAR, light_specular);
     
     Vector3 position = get_object_transform().origin_offset;

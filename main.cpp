@@ -37,6 +37,7 @@ Viewport root;
 RenderServer render_server = RenderServer::initialize(&root);    // initialization can be executed outside `main`!
 
 Node3D *world_center = new Node3D();
+PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.6, 0.6, 0.6});
 
 int main(int argc, char **argv) {
 
@@ -63,8 +64,9 @@ int main(int argc, char **argv) {
     default_global_shader.compile_and_link(DEFAULT_FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
     default_global_shader.start_shading(); // replace fixed function pipeline to programmable pipeline.
     
-    // world center init in node system
+    // world center & light init in node system
     root.add_child(world_center);
+    root.add_child(global_light);
 
     // plane!
     {
@@ -88,10 +90,10 @@ int main(int argc, char **argv) {
     global_camera->rotate_x(-45.0f);
     world_center->add_child(global_camera);
 
-    // light 
-    PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.6, 0.6, 0.6});
-    root.add_child(global_light);
 
+    // let room has more light
+    PointLight *ambient_light = new PointLight(0.0f, 0.0f, 0.0f, (Color){0.5, 0.5, 0.5}, 1, 0, 0);
+    root.add_child(ambient_light);
 
     // red cross test
     Ref<LineMesh> red_line = new LineMesh(
@@ -167,20 +169,28 @@ void keyboard(unsigned char key, int x, int y) {
             exit(EXIT_SUCCESS); 
             break;
         case 'w' : 
-        case 'W' :
             world_center->rotate_x(-1);
             break;
         case 's' : 
-        case 'S' :
             world_center->rotate_x(1);
             break;
         case 'a' : 
-        case 'A' :
             world_center->rotate_y(-1);
             break;
         case 'd' : 
-        case 'D' :
             world_center->rotate_y(1);
+            break;
+        case 'W' :
+            global_light->translate(0, 0.05, 0);
+            break;
+        case 'S' :
+            global_light->translate(0, -0.05, 0);
+            break;
+        case 'A' :
+            global_light->translate(-0.05, 0, 0);
+            break;
+        case 'D' :
+            global_light->translate(0.05, 0, 0);
             break;
     }
 }
