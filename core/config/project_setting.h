@@ -3,10 +3,11 @@
 #ifndef PROJECT_SETTING_H
 #define PROJECT_SETTING_H
 
+#define ProjectSetting_IF_DEBUG_TEAPDOT 1 // spawn teapot in (0,0,0) in every render for debug
 
 class ProjectSetting {
 public:
-    const char *window_name = "Tank Fight!";
+    const char *window_name = "Shader Playground";
     int window_width = 960; // width/height = 16/9
     int window_height;
 

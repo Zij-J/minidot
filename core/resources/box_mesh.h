@@ -1,5 +1,6 @@
 // 8 point mesh, forming a box
 // algorithm adopted from: https://stackoverflow.com/questions/28375338/cube-using-single-gl-triangle-strip, speedy array, I like it
+// normal adopted from: https://doc.babylonjs.com/features/featuresDeepDive/mesh/creation/custom/vertexNormals
 
 #ifndef BOX_MESH_H
 #define BOX_MESH_H
@@ -27,6 +28,17 @@ private:
     Vector3 side_lengths;
 
     Vector3 cube_strip[8] = {
+        Vector3{-1.f, -1.f, 1.f},    // Front-bottom-left: 0
+        Vector3{1.f, -1.f, 1.f},     // Front-bottom-right: 1
+        Vector3{1.f, -1.f, -1.f},    // Back-bottom-right: 2
+        Vector3{1.f, 1.f, 1.f},      // Front-top-right: 3
+        Vector3{1.f, 1.f, -1.f},     // Back-top-right: 4
+        Vector3{-1.f, 1.f, 1.f},     // Front-top-left: 5
+        Vector3{-1.f, 1.f, -1.f},    // Back-top-left: 6
+        Vector3{-1.f, -1.f, -1.f},   // Back-bottom-left: 7
+    };
+
+    Vector3 cube_nomal[8] = {
         Vector3{-1.f, -1.f, 1.f},    // Front-bottom-left: 0
         Vector3{1.f, -1.f, 1.f},     // Front-bottom-right: 1
         Vector3{1.f, -1.f, -1.f},    // Back-bottom-right: 2

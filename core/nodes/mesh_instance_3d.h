@@ -28,7 +28,7 @@ public:
     // drawing function is implemented in Mesh, reducing a layer of function call 
 
 private:    
-    const RenderServer::DrawingObject *server_mesh;
+    const ServerDrawingObject *server_mesh;
 };
 
 

@@ -8,21 +8,24 @@
 
 // varibales be interpolated to frag
 varying vec4 vertexColor;
-varying vec3 fragNormal;
-varying vec3 lightToFrag[gl_MaxLights]; // every light source need one
+// varying vec4 vertexPos;
+varying vec3 vertexNormal;
+varying vec3 vertexToLight[gl_MaxLights]; // every light source need one
 
 
 void main() {
-    // same as default
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    // same as default (Viewspace + projection)
+    vec4 veiw_vertex = gl_ModelViewMatrix * gl_Vertex;
+    gl_Position = gl_ProjectionMatrix * veiw_vertex;
 
     // just pass colors (will interpolated too)
     vertexColor = gl_Color;
 
     // vectors (do normalize in fragemnt shader, interperated vector will correctly nomalize)
-    fragNormal = gl_NormalMatrix * gl_Normal; // transform normal to global vector normal(* scale & shear only)
+    vertexNormal = gl_NormalMatrix  * gl_Normal; // transform normal to view space normal(* scale & shear only)
 
     for (int i = 0; i < gl_MaxLights; ++i) {
-        lightToFrag[i] = vec3(gl_Position) - vec3(gl_LightSource[i].position);
+        vertexToLight[i] = vec3(gl_LightSource[i].position) - vec3(veiw_vertex); // in view space too (gl_LightSource[i].position already in)
+        // vertexToLight[i] = vec3((gl_LightSource[i].position - gl_Vertex));
     }
 } 

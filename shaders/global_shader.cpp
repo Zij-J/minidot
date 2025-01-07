@@ -39,7 +39,6 @@ void GlobalShader::compile_and_link(string file, GLuint shader_type) {
     }
     // link shader
     glAttachShader(program, shader);
-    glLinkProgram(program);
     glGetShaderiv(shader, GL_LINK_STATUS, &success); // check link errors
     if (!success) {
         char infoLog[1024];
@@ -47,6 +46,7 @@ void GlobalShader::compile_and_link(string file, GLuint shader_type) {
         string error_message(" shader linkage failed\n");
         ErrorHandler::fatal_error(file + error_message + infoLog, __FILE__, __LINE__);
     }
+    glLinkProgram(program);
 
     // Clean ups
     glDeleteShader(shader); // after successful link, shader itself can be removed

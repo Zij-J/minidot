@@ -12,9 +12,12 @@ void ArrayMesh::draw(const Transform3D &final_transform) const {
     Vector3 final_point;
     glColor3f(1, 1, 1);
     for (int i = 0; i < points.size(); ++i) {
-        // color
+        // color & normal
         if (i < colors.size()) {
             glColor3f(colors[i].r, colors[i].g, colors[i].b);
+        }
+        if (i < normals.size()) {
+            glNormal3f(normals[i].x, normals[i].y, normals[i].z);
         }
 
         // vertices

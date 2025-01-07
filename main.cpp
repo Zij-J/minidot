@@ -36,6 +36,7 @@ void idle(void);
 Viewport root;  
 RenderServer render_server = RenderServer::initialize(&root);    // initialization can be executed outside `main`!
 
+Node3D *world_center = new Node3D();
 
 int main(int argc, char **argv) {
 
@@ -61,31 +62,34 @@ int main(int argc, char **argv) {
     default_global_shader.compile_and_link(DEFAULT_VERTEX_SHADER, GL_VERTEX_SHADER);
     default_global_shader.compile_and_link(DEFAULT_FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
     default_global_shader.start_shading(); // replace fixed function pipeline to programmable pipeline.
-
     
+    // world center init in node system
+    root.add_child(world_center);
+
     // plane!
     {
         float plane_width = 10.0f;
         ArrayMesh* plane_mesh = new ArrayMesh();
+        plane_mesh->colors.push_back((Color){.r = 0.1f, .g = 1.0f, .b = 0.1f});
+        plane_mesh->normals.push_back({.x = 0.0f, .y = 1.0f, .z = 0.0f});
         plane_mesh->points.push_back({.x = -plane_width / 2, .y = 0.0f, .z = -plane_width / 2});
         plane_mesh->points.push_back({.x = plane_width / 2, .y = 0.0f, .z = -plane_width / 2});
         plane_mesh->points.push_back({.x = -plane_width / 2, .y = 0.0f, .z = plane_width / 2});
         plane_mesh->points.push_back({.x = -plane_width / 2, .y = 0.0f, .z = plane_width / 2});
         plane_mesh->points.push_back({.x = plane_width / 2, .y = 0.0f, .z = -plane_width / 2});
         plane_mesh->points.push_back({.x = plane_width / 2, .y = 0.0f, .z = plane_width / 2});
-        plane_mesh->colors.push_back((Color){.r = 0.1f, .g = 1.0f, .b = 0.1f});
         root.add_child(new MeshInstance3D(plane_mesh));
     }
-    root.add_child(new MeshInstance3D(0.5, 0.25, 0, new BoxMesh(0.25)));
-    root.add_child(new MeshInstance3D(-0.5, 0.25, 0, new BoxMesh(0.25)));
+    root.add_child(new MeshInstance3D(0.45, 0.25, 0.4, new BoxMesh(0.25)));
+    root.add_child(new MeshInstance3D(-0.35, 0.25, 0.4, new BoxMesh(0.2)));
 
     // camera (look at -z)
     Camera3D *global_camera = new Camera3D(0.0f, 1.0f, 1.0f);
     global_camera->rotate_x(-45.0f);
-    root.add_child(global_camera);
+    world_center->add_child(global_camera);
 
     // light 
-    PointLight *global_light = new PointLight(0.0f, 0.25f, 0.0f, (Color){0.8f, 0.8f, 0.8f});
+    PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.6, 0.6, 0.6});
     root.add_child(global_light);
 
 
@@ -164,6 +168,19 @@ void keyboard(unsigned char key, int x, int y) {
             break;
         case 'w' : 
         case 'W' :
+            world_center->rotate_x(-1);
+            break;
+        case 's' : 
+        case 'S' :
+            world_center->rotate_x(1);
+            break;
+        case 'a' : 
+        case 'A' :
+            world_center->rotate_y(-1);
+            break;
+        case 'd' : 
+        case 'D' :
+            world_center->rotate_y(1);
             break;
     }
 }

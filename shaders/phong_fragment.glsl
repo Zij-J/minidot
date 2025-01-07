@@ -2,8 +2,8 @@
 
 // Received from the vertex shader
 varying vec4 vertexColor;  
-varying vec3 fragNormal;
-varying vec3 lightToFrag[gl_MaxLights];
+varying vec3 vertexNormal;
+varying vec3 vertexToLight[gl_MaxLights];
 
 
 void main() {
@@ -12,15 +12,11 @@ void main() {
 
     // Loop through all light sources
     for (int i = 0; i < gl_MaxLights; ++i) {
-        vec3 lightPos = vec3(gl_LightSource[i].position);  // Light position in eye space
-        // vec3 lightDir = normalize(lightPos - fragVertexPos);
-
         // Ambient component
         vec4 ambient = gl_LightSource[i].ambient * vertexColor;
 
         // Diffuse component
-        float diff = max(dot(normalize(fragNormal), normalize(lightToFrag[i])), 0.0);
-        // float diff = 0.0;
+        float diff = max(dot(normalize(vertexNormal), normalize(vertexToLight[i])), 0.0);
         vec4 diffuse = diff * gl_LightSource[i].diffuse * vertexColor;
 
         // Specular component
@@ -34,5 +30,12 @@ void main() {
     }
 
     gl_FragColor = finalColor;  // Set the output color
+    // gl_FragColor.r = length(vertexToLight[0]) / 10;  // Set the output color
+    // gl_FragColor.g = 0; 
+    // gl_FragColor.b = 0; 
 
+    
+    // gl_FragColor.rgb = normalize(vertexToLight[0]); 
+    // gl_FragColor.a = 1; 
+    // gl_FragColor.rgb = vec3(-gl_LightSource[0].position); // proof position is in view space
 }

@@ -1,5 +1,6 @@
 #include "render_server.h"
-#include "../debugger/code_tester.h"
+#include "../nodes/point_light.h"
+#include "../config/project_setting.h"
 
 #include <GL/glut.h> // for swap buffer
 #include <GL/glu.h> // for reset camera
@@ -10,7 +11,7 @@ bool RenderServer::is_deleting = false; // singleton deletion by destructor will
 
 
 // default: ~~TODO: adding in tree order~~, then let OpenGL do sorting  
-const RenderServer::DrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node) { 
+const ServerDrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node) { 
     DrawingMesh2D *new_mesh = new DrawingMesh2D(mesh, containing_node);
 
     // just add in list, let OpenGL do the sorting
@@ -26,7 +27,7 @@ const RenderServer::DrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> 
 
 
 // really just add in list, let OpenGL do the sorting
-const RenderServer::DrawingObject *RenderServer::new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node) { 
+const ServerDrawingObject *RenderServer::new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node) { 
     DrawingMesh3D *new_mesh = new DrawingMesh3D(mesh, containing_node);
 
     new_mesh->before = mesh_list_3d;
@@ -35,9 +36,18 @@ const RenderServer::DrawingObject *RenderServer::new_mesh_instance_3d(Ref<Mesh> 
 
     return new_mesh;
 }
+const ServerDrawingObject *RenderServer::new_light_3d(PointLight *light) {
+    DrawingLight3D *new_light = new DrawingLight3D(light);
+
+    new_light->before = light_list_3d;
+    new_light->next = light_list_3d->next;
+    light_list_3d->next = new_light;
+
+    return new_light;
+}
 
 
-void RenderServer::delete_drawing_object(const DrawingObject *mesh) { 
+void RenderServer::delete_drawing_object(const ServerDrawingObject *mesh) { 
     mesh->before->next = mesh->next;
     if (mesh->next != nullptr) {
         mesh->next->before = mesh->before;
@@ -115,15 +125,27 @@ void RenderServer::redraw() {
                 camera_transform.basis_y.x, camera_transform.basis_y.y, camera_transform.basis_y.z);  // up is `camera +y`
 
 
+        // light first
+        DrawingLight3D *now_light = static_cast<DrawingLight3D *>(light_list_3d->next);
+        while (now_light != nullptr) {
+            now_light->containing_light->draw_light(); // expend `draw_by` to reduce function call
+            now_light = static_cast<DrawingLight3D *>(now_light->next);
+        }
+        // then mesh 
         DrawingMesh3D *now_mesh = static_cast<DrawingMesh3D *>(mesh_list_3d->next);
         while (now_mesh != nullptr) {
             now_mesh->mesh->draw(now_mesh->containing_node->get_object_transform()); // expend `draw_by` to reduce function call
             now_mesh = static_cast<DrawingMesh3D *>(now_mesh->next);
         }
 
+        #if ProjectSetting_IF_DEBUG_TEAPDOT
+            glTranslated(0, 0.1375, 0);
+            glutSolidTeapot(0.175);
+            glTranslated(0, -0.1375, 0);
+        #endif
 
         // reset camera
-        glDisable(GL_LIGHTING); // 2D no light
+        // glDisable(GL_LIGHTING); // 2D no light
         glDisable(GL_COLOR_MATERIAL);  // 2D no need material
         glDisable(GL_DEPTH_TEST);  // 2D no sort by depth
         glMatrixMode(GL_PROJECTION);
@@ -135,7 +157,7 @@ void RenderServer::redraw() {
     }
 
     // draw 2D in front
-    DrawingObject *now_object = mesh_list_2d->next;
+    ServerDrawingObject *now_object = mesh_list_2d->next;
     while (now_object != nullptr) {
         now_object->draw_by(*root);
         now_object = now_object->next;
@@ -164,4 +186,9 @@ void RenderServer::DrawingMesh2D::draw_by(const Viewport &drawing_viewport) {
 void RenderServer::DrawingMesh3D::draw_by(const Viewport &drawing_viewport) {
     // mesh->draw(drawing_viewport.get_view_transform() * containing_node->get_object_transform());
     mesh->draw(containing_node->get_object_transform()); // let openGL do camera_transform + projection_transform 
+}
+
+
+void RenderServer::DrawingLight3D::draw_by(const Viewport &drawing_viewport) {
+    containing_light->draw_light(); // light itself has transform, no transform needed
 }

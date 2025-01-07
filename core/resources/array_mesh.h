@@ -14,6 +14,7 @@ public:
 
     Vector<Color> colors;
     Vector<Vector3> points;
+    Vector<Vector3> normals;
 
     ArrayMesh() {} // must push >= 3 points after construct, otherwise won't be drawn
     ~ArrayMesh() {}

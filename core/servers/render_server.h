@@ -5,24 +5,29 @@
 
 #include "../resources/texture.h"
 #include "../resources/mesh.h"
+#include "../nodes/point_light.h"
 #include "../nodes/node_2d.h"
 #include "../nodes/node_3d.h"
 #include "../nodes/viewport.h"
 #include "../templates/ref.h"
 
+
+// used in RenderServer, can't be nested class because of mutual inclusion of PointLight/RenderServer
+// nested class simply can't forward declaration 
+class ServerDrawingObject {
+public:
+    ServerDrawingObject *before = nullptr;
+    ServerDrawingObject *next = nullptr;
+
+    ServerDrawingObject() {}
+    virtual ~ServerDrawingObject() {}
+
+    virtual void draw_by(const Viewport &drawing_viewport) = 0;
+};
+
+
 class RenderServer {    
 public:
-    class DrawingObject {
-    public:
-        DrawingObject *before = nullptr;
-        DrawingObject *next = nullptr;
-
-        DrawingObject() {}
-        virtual ~DrawingObject() {}
-
-        virtual void draw_by(const Viewport &drawing_viewport) = 0;
-    };
-
     static RenderServer &initialize(Viewport *root) {
         if (singleton == nullptr) {
             singleton = new RenderServer(root);
@@ -56,9 +61,10 @@ public:
     //     now_texture->next = new_texture;
     // }
 
-    const DrawingObject *new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node);
-    const DrawingObject *new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node);
-    void delete_drawing_object(const DrawingObject *mesh);
+    const ServerDrawingObject *new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node);
+    const ServerDrawingObject *new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node);
+    const ServerDrawingObject *new_light_3d(PointLight *light);
+    void delete_drawing_object(const ServerDrawingObject *mesh);
 
     void redraw();
 
@@ -69,7 +75,7 @@ private:
     //     Node2D *containing_node;
     //     DrawingTexture *next;
     // };
-    class DrawingMesh2D: public DrawingObject {
+    class DrawingMesh2D: public ServerDrawingObject {
     public:
         Ref<Mesh> mesh;
         Node2D *containing_node;
@@ -80,7 +86,7 @@ private:
 
         void draw_by(const Viewport &drawing_viewport);
     };
-    class DrawingMesh3D: public DrawingObject {
+    class DrawingMesh3D: public ServerDrawingObject {
     public:
         Ref<Mesh> mesh;
         Node3D *containing_node;
@@ -88,6 +94,16 @@ private:
         DrawingMesh3D(): containing_node(nullptr) {} // empty consturct
         DrawingMesh3D(Ref<Mesh> mesh, Node3D *containing_node): mesh(mesh), containing_node(containing_node) {}
         ~DrawingMesh3D() {}
+
+        void draw_by(const Viewport &drawing_viewport);
+    };
+    class DrawingLight3D: public ServerDrawingObject { // light follow data structure mesh, for future expansion & lazy to change
+    public:
+        PointLight *containing_light;
+
+        DrawingLight3D(): containing_light(nullptr) {} // empty consturct
+        DrawingLight3D(PointLight *containing_light): containing_light(containing_light) {}
+        ~DrawingLight3D() {}
 
         void draw_by(const Viewport &drawing_viewport);
     };
@@ -100,11 +116,13 @@ private:
     // DrawingTexture *texture_list = new DrawingTexture;  // head noded list
     DrawingMesh2D *mesh_list_2d = new DrawingMesh2D;           // all drawables in 2D
     DrawingMesh3D *mesh_list_3d = new DrawingMesh3D;           // all drawables in 3D
+    DrawingLight3D *light_list_3d = new DrawingLight3D;           // all lights in 3D
 
     RenderServer(Viewport *root): root(root) {
         // texture_list->next = nullptr;
         mesh_list_2d->next = nullptr;
         mesh_list_3d->next = nullptr;
+        light_list_3d->next = nullptr;
     }
 };
 
