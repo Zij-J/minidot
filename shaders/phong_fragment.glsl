@@ -2,6 +2,7 @@
 
 // Received from the vertex shader
 varying vec4 vertexColor;  
+varying vec4 vertexPos;
 varying vec3 vertexNormal;
 varying vec3 vertexToLight[gl_MaxLights];
 
@@ -13,21 +14,22 @@ void main() {
     // Loop through all light sources
     for (int i = 0; i < gl_MaxLights; ++i) {
         // Ambient component
-        vec4 ambient = gl_LightSource[i].ambient * vertexColor;
+        vec4 ambient = gl_LightSource[i].ambient;
 
         // Diffuse component
         float diff = max(dot(normalize(vertexNormal), normalize(vertexToLight[i])), 0.0);
         float threshold_diff = smoothstep(0.245, 0.255, diff);      // cel shading! by threshold 25.5 & smooth interpolation between 0.245 to 0.255 
-        vec4 diffuse = threshold_diff * gl_LightSource[i].diffuse * vertexColor;
+        vec4 diffuse = threshold_diff * gl_LightSource[i].diffuse;
 
         // Specular component
-        // vec3 viewDir = normalize(-fragVertexPos);  // View direction in eye space
-        // vec3 reflectDir = reflect(-lightDir, normal);
-        // float spec = pow(max(dot(viewDir, reflectDir), 0.0), gl_FrontMaterial.shininess);
-        // vec4 specular = spec * gl_LightSource[i].specular * gl_FrontMaterial.specular;
+        vec3 vertexToEye = normalize(-vec3(vertexPos));  // View direction in view space
+        vec3 reflectLight = reflect(-normalize(vertexToLight[i]), normalize(vertexNormal)); // reflacted light in view space
+        float spec = pow(max(dot(vertexToEye, reflectLight), 0.0), 5); // fixed, power 5 time
+        float threshold_spec = smoothstep(0.621, 0.629, spec);      // cel shading again! 
+        vec4 specular = threshold_spec * gl_LightSource[i].specular;
 
         // Accumulate lighting contributions
-        finalColor += ambient + diffuse;
+        finalColor += (ambient + diffuse + specular) * vertexColor;
     }
 
     gl_FragColor = finalColor;  // Set the output color

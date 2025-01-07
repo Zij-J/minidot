@@ -37,7 +37,7 @@ Viewport root;
 RenderServer render_server = RenderServer::initialize(&root);    // initialization can be executed outside `main`!
 
 Node3D *world_center = new Node3D();
-PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.6, 0.6, 0.6});
+PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.9, 0.9, 0.9}, 0.25, 0.3, 1);
 
 int main(int argc, char **argv) {
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 
 
     // let room has more light
-    PointLight *ambient_light = new PointLight(0.0f, 0.0f, 0.0f, (Color){0.5, 0.5, 0.5}, 1, 0, 0);
+    PointLight *ambient_light = new PointLight(0.0f, 0.0f, 0.0f, (Color){0.5, 0.5, 0.5}, 0.9, 0, 0);
     root.add_child(ambient_light);
 
     // red cross test

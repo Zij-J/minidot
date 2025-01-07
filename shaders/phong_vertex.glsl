@@ -8,7 +8,7 @@
 
 // varibales be interpolated to frag
 varying vec4 vertexColor;
-// varying vec4 vertexPos;
+varying vec4 vertexPos;
 varying vec3 vertexNormal;
 varying vec3 vertexToLight[gl_MaxLights]; // every light source need one
 
@@ -20,6 +20,7 @@ void main() {
 
     // just pass colors (will interpolated too)
     vertexColor = gl_Color;
+    vertexPos = veiw_vertex; // Pos in view space
 
     // vectors (do normalize in fragemnt shader, interperated vector will correctly nomalize)
     vertexNormal = gl_NormalMatrix  * gl_Normal; // transform normal to view space normal(* scale & shear only)
