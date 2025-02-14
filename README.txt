@@ -18,6 +18,11 @@
 5. 還不行？ 我也不知道，請聯繫我！
 
 
+# 使用方式
+鍵盤 wasd 移動相機
+切換成大寫，移動 light source
+
+
 # 參考資料
 - 依我的理解簡化(刻/抄)了 Godot node 系統: https://github.com/godotengine/godot/tree/master
     - nodes 做主要 object, memory management

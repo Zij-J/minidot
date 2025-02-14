@@ -37,7 +37,7 @@ Viewport root;
 RenderServer render_server = RenderServer::initialize(&root);    // initialization can be executed outside `main`!
 
 Node3D *world_center = new Node3D();
-PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.9, 0.9, 0.9}, 0.25, 0.3, 1);
+PointLight *global_light = new PointLight(0.0f, 0.1f, 0.5f, (Color){0.9, 0.9, 0.9}, 0.2, 0.3, 1);
 
 int main(int argc, char **argv) {
 

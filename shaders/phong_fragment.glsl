@@ -28,8 +28,14 @@ void main() {
         float threshold_spec = smoothstep(0.621, 0.629, spec);      // cel shading again! 
         vec4 specular = threshold_spec * gl_LightSource[i].specular;
 
+        // Rim
+        float rim = -dot(vertexToEye, normalize(vertexNormal)); // face away eye, rim it
+        float rimThres = -0.3 * dot(normalize(vertexToLight[i]), normalize(vertexNormal)); // even facing a bit, still rim it. for exaggeration  
+        float rimStrength = 0.5;
+        rim = smoothstep(rimThres - 0.05, rimThres + 0.05, rim) * rimStrength;
+ 
         // Accumulate lighting contributions
-        finalColor += (ambient + diffuse + specular) * vertexColor;
+        finalColor += (ambient + diffuse + specular + rim) * vertexColor;
     }
 
     gl_FragColor = finalColor;  // Set the output color
