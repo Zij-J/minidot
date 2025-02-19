@@ -8,7 +8,7 @@ void ArrayMesh::draw(const Transform3D &final_transform) const {
         return ;
     }
 
-    glBegin(GL_TRIANGLE_STRIP);
+    glBegin(GL_TRIANGLES);
     Vector3 final_point;
     glColor3f(1, 1, 1);
     for (int i = 0; i < points.size(); ++i) {

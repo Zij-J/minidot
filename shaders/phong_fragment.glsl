@@ -30,9 +30,9 @@ void main() {
 
         // Rim
         float rim = -dot(vertexToEye, normalize(vertexNormal)); // face away eye, rim it
-        float rimThres = -0.3 * dot(normalize(vertexToLight[i]), normalize(vertexNormal)); // even facing a bit, still rim it. for exaggeration  
+        float rimThres = -0.35 * dot(normalize(vertexToLight[i]), normalize(vertexNormal)); // even facing a bit, still rim it. for exaggeration  
         float rimStrength = 0.5;
-        rim = smoothstep(rimThres - 0.05, rimThres + 0.05, rim) * rimStrength;
+        rim = smoothstep(rimThres - 0.01, rimThres + 0.01, rim) * rimStrength;
  
         // Accumulate lighting contributions
         finalColor += (ambient + diffuse + specular + rim) * vertexColor;

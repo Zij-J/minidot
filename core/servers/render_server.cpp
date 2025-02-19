@@ -17,8 +17,8 @@ const ServerDrawingObject *RenderServer::new_mesh_instance_2d(Ref<Mesh> mesh, No
     // just add in list, let OpenGL do the sorting
     new_mesh->before = mesh_list_2d;
     new_mesh->next = mesh_list_2d->next;
-    if (mesh_list_3d->next != nullptr) {
-        mesh_list_3d->next->before = new_mesh; 
+    if (mesh_list_2d->next != nullptr) {
+        mesh_list_2d->next->before = new_mesh; 
     }
     mesh_list_2d->next = new_mesh;
 
@@ -32,6 +32,9 @@ const ServerDrawingObject *RenderServer::new_mesh_instance_3d(Ref<Mesh> mesh, No
 
     new_mesh->before = mesh_list_3d;
     new_mesh->next = mesh_list_3d->next;
+    if (mesh_list_3d->next != nullptr) {
+        mesh_list_3d->next->before = new_mesh; 
+    }
     mesh_list_3d->next = new_mesh;
 
     return new_mesh;

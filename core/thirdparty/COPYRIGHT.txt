@@ -14,3 +14,10 @@ Upstream-Name: File BMP_IO.h
 Source: Unknown
 Copyright:  2004, Huamin Wang
 License: Unknown
+
+
+Files: ./sfm_loader/*
+Upstream-Name: File BMP_IO.h
+Source: National Chung Cheng University Computer Science Damon's lab website
+Copyright:  Unknown
+License: Unknown

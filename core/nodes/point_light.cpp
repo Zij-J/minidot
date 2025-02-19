@@ -52,3 +52,9 @@ void PointLight::draw_light() {
     
     glEnable(GL_LIGHT0 + light_index);
 }
+
+void PointLight::change_color(Color new_color) {
+    color = new_color;
+    GLfloat light_diffuse[] = {color.r, color.g, color.b, 1.0}; // main contribution is diffuse, color is it!
+    glLightfv(GL_LIGHT0 + light_index, GL_DIFFUSE, light_diffuse);
+}

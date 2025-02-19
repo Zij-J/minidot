@@ -6,7 +6,7 @@
 SOURCES := $(wildcard *.cpp */*.cpp */*/*.cpp */*/*/*.cpp)
 OUTS := $(addsuffix .o, $(basename $(SOURCES)))
 DEPS := $(addsuffix .d, $(basename $(SOURCES)))
-EXE := final
+EXE := main
 
 # compiler flags
 FLAGS := -O -Wall # optimize a little 

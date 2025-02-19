@@ -19,6 +19,8 @@ public:
 
     void draw_light();
 
+    void change_color(Color new_color);
+
 private:
     static int total_light_count;
 

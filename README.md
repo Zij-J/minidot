@@ -58,12 +58,12 @@
 - if v.s. empty function call: https://stackoverflow.com/questions/10797398/which-is-faster-empty-function-call-or-if-statements
     - function call 比較傷，目前 RenderServer 還是用 if 去看是否 Node 需要 draw
 
-# RD (Reserch & Development) 時的自言自語
-[V] fix dirty transform 
+<!-- # RD (Reserch & Development) 時的自言自語
+- [X] fix dirty transform 
     - Godot 用 RECURSIVE 更新 global transform: https://github.com/godotengine/godot/blob/master/scene/3d/node_3d.cpp (line 481, 115)
         - 推測不是 performance critical + 讓程式簡潔，所以醬
         - 我拒絕! 我愛 iterative!
-[] Viewport 2D > 3D (to camera coordinate > project transform)
+- [ ] Viewport 2D > 3D (to camera coordinate > project transform)
     [] project transform(相對 camera position + perspective projection) 存在 Viewport, 用在 RenderServer
     - 手刻參考: https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling + 姚智原教授的 OpenGL 課本(2019 買的 2018 出版書)
         - 沒有實踐 Frustum-Culling (Godot 有 AABB 系統，我沒有又懶了刻...)
@@ -146,31 +146,31 @@
             - 除了 culling 部分懶了實踐，其他都有了！
                 - ***沒時間實作 "以 tree order" 加入...***, 只是直接加而已
                 - 也沒有 sprite2D 了!! 先求有再求好!
-[V] RefCounted
+- [X] RefCounted
     - RefCounted 一定要 Ref (Ref has a `Type`) 才行，不可能有 class 能同時 "只有 counter + pointer" / "有整個 class data member"，畢竟**變數一下去整個 data member 一定要 malloc 好**，`Type` is a/has a RefCount 不可行。
     - Godot 中 RefCounted 這個 base 感覺很沒用，所以我只實作 Ref
-[V] Node3D
-[V] moving & rotate
-[V] MeshInstance3D
-    [V] server: 3D > glLookAt+Orth2D > 2D 
+- [X] Node3D
+- [X] moving & rotate
+- [X] MeshInstance3D
+    - [X] server: 3D > glLookAt+Orth2D > 2D 
         - 2D 守 tree order 3D 不用，必須分開
         - 都分開了，那能特殊處理 2D 的 Mesh? Ans: 可以!
             - 哈! 當時從沒想到分開，是最簡單&最實際的，大人果然比較厲害!
-    [V] add mesh in 3D (remove mesh 2D/3D in one function)
-    [V] render 
-    [V] moving & rotate
-    [V] get mesh (modifiable, for Ref)
+    - [X] add mesh in 3D (remove mesh 2D/3D in one function)
+    - [X] render 
+    - [X] moving & rotate
+    - [X] get mesh (modifiable, for Ref)
         - 原本就是 public 了!
         - 除了 main 其他 scope 都能使 Ref 正確被 free, 所以決定維持 "先創 ArrayMesh > 給 Ref<Mesh> > 給 MeshInstance" 模式
             - main 可以手動多加 scope 解決此問題
-[V] camera3D
-    [V] server: camera setting > 3D > glLookAt+Orth2D > 2D 
+- [X] camera3D
+    - [X] server: camera setting > 3D > glLookAt+Orth2D > 2D 
     - no 2D, yet!
     - **heavily OpenGL**
-[V] BoxMesh
-[V] PointLight
+- [X] BoxMesh
+- [X] PointLight
     - **重要假設**: 所有 Node 進入 tree 都是只進不出 (除非被 free)
         - if 沒有此，需要 `on_tree_exit`, 在 camera, light, node3d/node2d 的 cache 都要加對應處理  
     - **heavily OpenGL**
 ---- (fast hw2) ----
-[] Input Callback
+- [ ] Input Callback -->
