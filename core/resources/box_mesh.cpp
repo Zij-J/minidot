@@ -75,5 +75,9 @@ void BoxMesh::_update_cube_strip_by_length() {
         cube_strip[i].x *= side_lengths.x / 2.0f;
         cube_strip[i].y *= side_lengths.y / 2.0f;
         cube_strip[i].z *= side_lengths.z / 2.0f;
+
+        cube_nomal[i].x *= side_lengths.x; // normal need to update too, do normalize in shaders
+        cube_nomal[i].y *= side_lengths.y;
+        cube_nomal[i].z *= side_lengths.z;
     }
 }
