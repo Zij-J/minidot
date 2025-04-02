@@ -13,27 +13,30 @@ void main() {
 
     // Loop through all light sources
     for (int i = 0; i < gl_MaxLights; ++i) {
+        // attenuation factor: (1/distance)^2
+        float attenuation = pow(1.0 / length(vertexToLight[i]), 2);
+
         // Ambient component
         vec4 ambient = gl_LightSource[i].ambient;
 
         // Diffuse component
-        float diff = max(dot(normalize(vertexNormal), normalize(vertexToLight[i])), 0.0);
-        float threshold_diff = smoothstep(0.245, 0.255, diff);      // cel shading! by threshold 25.5 & smooth interpolation between 0.245 to 0.255 
+        float diff = max(dot(normalize(vertexNormal), normalize(vertexToLight[i])), 0.0) * attenuation;
+        float threshold_diff = smoothstep(0.49, 0.51, diff);      // cel shading! by threshold 0.5 & smooth interpolation between 0.45 to 0.55 
         vec4 diffuse = threshold_diff * gl_LightSource[i].diffuse;
 
         // Specular component
         vec3 vertexToEye = normalize(-vec3(vertexPos));  // View direction in view space
         vec3 reflectLight = reflect(-normalize(vertexToLight[i]), normalize(vertexNormal)); // reflacted light in view space
-        float spec = pow(max(dot(vertexToEye, reflectLight), 0.0), 5); // fixed, power 5 time
+        float spec = pow(max(dot(vertexToEye, reflectLight), 0.0), 10) * attenuation; // fixed, power 10 time
         float threshold_spec = smoothstep(0.621, 0.629, spec);      // cel shading again! 
         vec4 specular = threshold_spec * gl_LightSource[i].specular;
 
         // Rim
-        float rim = -dot(vertexToEye, normalize(vertexNormal)); // face away eye, rim it
-        float rimThres = -0.35 * dot(normalize(vertexToLight[i]), normalize(vertexNormal)); // even facing a bit, still rim it. for exaggeration  
-        float rimStrength = 0.5;
+        float rim = (max(-dot(vertexToEye, normalize(vertexNormal)), -0.3) + 0.3) * attenuation * max(dot(normalize(vertexToLight[i]), normalize(vertexNormal)), 0); // +0.3: facing a bit still rim it.
+        float rimStrength = 0.7;
+        float rimThres = 0.1;   
         rim = smoothstep(rimThres - 0.01, rimThres + 0.01, rim) * rimStrength;
- 
+        
         // Accumulate lighting contributions
         finalColor += (ambient + diffuse + specular + rim) * vertexColor;
     }

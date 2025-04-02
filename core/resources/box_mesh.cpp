@@ -18,6 +18,8 @@ void BoxMesh::set_side_length(float x_length, float y_length, float z_length) {
 
 void BoxMesh::draw(const Transform3D &final_transform) const {
 
+    /* polycube
+    
     Vector3 final_cube_strip[8];
     for (int i = 0; i < 8; ++i) {
         final_cube_strip[i] = final_transform * cube_strip[i];
@@ -63,19 +65,50 @@ void BoxMesh::draw(const Transform3D &final_transform) const {
         glVertex3f(final_cube_strip[6].x, final_cube_strip[6].y, final_cube_strip[6].z); 
         glNormal3f(cube_nomal[4].x, cube_nomal[4].y, cube_nomal[4].z); 
         glVertex3f(final_cube_strip[4].x, final_cube_strip[4].y, final_cube_strip[4].z); 
+    */
 
-        
+
+    Vector3 final_cube_vertices[24];
+    Vector3 final_cube_normal[6];
+    for (int i = 0; i < 24; ++i) {
+        final_cube_vertices[i] = final_transform * cube_vertices[i];
+    }   
+    // rotate the normal(no translate)
+    for (int ni = 0; ni < 6; ++ni) {
+        final_cube_normal[ni] = cube_nomal[ni];
+        final_cube_normal[ni].transformed_by(final_transform.basis_x, final_transform.basis_y, final_transform.basis_z);
+    }
+
+    glBegin(GL_QUADS);              // Begin drawing the color cube with 6 quads
+        glColor3f(color.r, color.g, color.b);
+        for (int i = 0; i < 24; ++i) {
+            int ni = i / 4; // normal index
+            glNormal3f(final_cube_normal[ni].x, final_cube_normal[ni].y, final_cube_normal[ni].z); 
+            glVertex3f(final_cube_vertices[i].x, final_cube_vertices[i].y, final_cube_vertices[i].z); 
+        }
     glEnd();
 }
 
 
 
 void BoxMesh::_update_cube_strip_by_length() {
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 24; ++i) {
+        /* polycube
         cube_strip[i].x *= side_lengths.x / 2.0f;
         cube_strip[i].y *= side_lengths.y / 2.0f;
         cube_strip[i].z *= side_lengths.z / 2.0f;
 
+        cube_nomal[i].x *= side_lengths.x; // normal need to update too, do normalize in shaders
+        cube_nomal[i].y *= side_lengths.y;
+        cube_nomal[i].z *= side_lengths.z;
+        */
+
+        cube_vertices[i].x *= side_lengths.x / 2.0f;
+        cube_vertices[i].y *= side_lengths.y / 2.0f;
+        cube_vertices[i].z *= side_lengths.z / 2.0f;
+    }
+
+    for (int i = 0; i < 6; ++i) {
         cube_nomal[i].x *= side_lengths.x; // normal need to update too, do normalize in shaders
         cube_nomal[i].y *= side_lengths.y;
         cube_nomal[i].z *= side_lengths.z;

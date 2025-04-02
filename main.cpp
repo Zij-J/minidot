@@ -30,7 +30,7 @@ void display();
 void reshape(int w, int h);
 void keyboard(unsigned char key, int x, int y);
 void idle(void);
-
+void special_keyboard(int key, int x, int y);
 
 
 bool is_need_redraw = false;
@@ -150,6 +150,7 @@ int main(int argc, char **argv) {
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
+    glutSpecialFunc(special_keyboard);
 
     glEnable(GL_COLOR_MATERIAL);  // when light, glColor become material
 
@@ -183,6 +184,9 @@ int main(int argc, char **argv) {
     // light (not visible enought? because it's Gouraud shading...?)
     // root.add_child(new PointLight(0.0f, 0.5f, 0.0f, (Color){.r = 1.0f, .g = 1.0f, .b = 1.0f}));
 
+    // player tank translate
+    player.body->translate(0.6f, 0.0f, 0.0f);
+
     // enemy tank
     Tank *enemy = new Tank(&root); 
     enemy->alter_as_enemy();
@@ -197,12 +201,12 @@ int main(int argc, char **argv) {
 
 
     // camera
-    camera = new Camera3D(0.0f, 1.5f, 1.9f);
+    camera = new Camera3D(0.0f, 0.5f, 0.9f);
     camera->rotate_x(-30.0f);
     root.add_child(camera);
 
     // light
-    light = new PointLight(0.0f, 1.9f, 0.0f, (Color){1.0f, 1.0f, 0.0f});
+    light = new PointLight(-0.1f, 0.6f, 0.0f, (Color){1.0f, 1.0f, 0.0f});
     root.add_child(light);
 
 
@@ -239,7 +243,7 @@ int main(int argc, char **argv) {
             delete[] faceNormal;
         }
     }
-    MeshInstance3D *duck = new MeshInstance3D(-1.0f, 0.0f, 0.0f, duck_mesh);
+    MeshInstance3D *duck = new MeshInstance3D(-0.5f, 0.0f, 0.0f, duck_mesh);
     duck->scale(0.001f);
     root.add_child(duck);
 
