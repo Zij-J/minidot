@@ -27,7 +27,7 @@ void main() {
         // Specular component
         vec3 vertexToEye = normalize(-vec3(vertexPos));  // View direction in view space
         vec3 reflectLight = reflect(-normalize(vertexToLight[i]), normalize(vertexNormal)); // reflacted light in view space
-        float spec = pow(max(dot(vertexToEye, reflectLight), 0.0), 10) * attenuation; // fixed, power 10 time
+        float spec = pow(max(dot(vertexToEye, reflectLight), 0.0), 15) * attenuation; // fixed, power 10 time
         float threshold_spec = smoothstep(0.621, 0.629, spec);      // cel shading again! 
         vec4 specular = threshold_spec * gl_LightSource[i].specular;
 

@@ -181,8 +181,8 @@ int main(int argc, char **argv) {
         plane_mesh->colors.push_back((Color){.r = 0.1f, .g = 0.3f, .b = 0.1f});
         root.add_child(new MeshInstance3D(plane_mesh));
     }
-    // light (not visible enought? because it's Gouraud shading...?)
-    // root.add_child(new PointLight(0.0f, 0.5f, 0.0f, (Color){.r = 1.0f, .g = 1.0f, .b = 1.0f}));
+    // light 
+    root.add_child(new PointLight(-2.0f, 1.2f, 0.0f, (Color){.r = 0.6f, .g = 0.6f, .b = 0.6f}));
 
     // player tank translate
     player.body->translate(0.6f, 0.0f, 0.0f);

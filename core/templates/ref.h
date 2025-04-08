@@ -2,7 +2,7 @@
 #define REF
 
 
-// pointer-ish, reference counting, simplied from Godot: https://github.com/godotengine/godot/blob/master/core/object/ref_counted.h
+// pointer-ish, unprotected (directly `static_cast`) polymorphism reference counting, simplied from Godot: https://github.com/godotengine/godot/blob/master/core/object/ref_counted.h
 template <typename Type>
 class Ref {
     template <typename Type_Other> // base/derived Ref can access `object` pointer 
@@ -14,14 +14,14 @@ public:
     Ref(Type *origin): counter(new int(1)), object(origin) {} // construct object from outside 
 
     template <typename Type_Derived>
-	Ref(Type_Derived *origin): counter(new int(1)), object(origin) {} // construct object from outside (derived class)
+	Ref(Type_Derived *origin): counter(new int(1)), object(origin) {} // construct object from outside (derived class only)
 
     template <typename... VarArgs>
     Ref(VarArgs... params): counter(new int(1)), object(new Type(params...)) {} // construct object 
 
-    template <typename Type_Based>
-    Ref(Ref<Type_Based>& origin) { // copy construct (shadow copy reference)
-        _ref<Type_Based>(origin);
+    template <typename Type_Other>    
+    Ref(Ref<Type_Other>& origin) { // copy construct (shadow copy reference)
+        _ref<Type_Other>(origin);
     }
     Ref(Ref& origin) { // copy construct (shadow copy reference)
         _ref(origin);
@@ -44,9 +44,9 @@ public:
     //     counter = new int(1);
     //     object = origin.object;
     // }
-    template <typename Type_Base>
-    void operator=(const Ref<Type_Base>& origin) { // reassign (copy construct, shadow copy reference)
-        _ref<Type_Base>(origin);
+    template <typename Type_Other>
+    void operator=(const Ref<Type_Other>& origin) { // reassign (copy construct, shadow copy reference)
+        _ref<Type_Other>(origin);
     }
     void operator=(const Ref& origin) { // reassign (copy construct, shadow copy reference)
         _ref(origin);
@@ -72,8 +72,8 @@ private:
         }
     }
     
-    template <typename Type_Base>
-    void _ref(const Ref<Type_Base>& origin) {
+    template <typename Type_Other>
+    void _ref(const Ref<Type_Other>& origin) {
         if (object != nullptr) {
             _unref();        
         }

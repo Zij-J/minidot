@@ -1,9 +1,69 @@
-# OpenGL 環境
+# Minidot
+![alt text](readme_images/first_look.png)
+**Minidot is a demake @godotengine** built under old immediate mode [freeglut](https://freeglut.sourceforge.net/) (i.e. `glBegin`'s and `glEnd`'s) and C++.  
+Though old, Minidot have a complete [node tree system](https://docs.godotengine.org/en/stable/getting_started/introduction/key_concepts_overview.html#nodes) and a global vertex-fragment shader. All built from scratch by myself.
+
+The repo contains a tank game demo with cel shading, written in `main.cpp`, `phong_vertex.glsl`, and `phong_fragment.glsl`.
+
+## Features
+**Node tree with 2D & 3D node coexists**
+
+- another `mesh_list_2d`/`3d` in `RenderServer` records and renders meshes to prevent tree traversal in every frame.   
+- can use for HUD of 3D scene, e.g., red sight in First Person View
+
+**Demake Delegate, aka [signal system](https://docs.godotengine.org/en/stable/classes/class_signal.html), aka [Observer](https://gameprogrammingpatterns.com/observer.html)**
+<p float="left">
+  <img src="readme_images/delegate_declare.png" width="45%" />
+  <img src="readme_images/delegate_notify.png" width="45%" /> 
+</p>
+
+- delegate `tree_entered` helps `Node2D`/`Node3D` cache parent node, `Camera3D` register to `Viewport` (transform manager), and `PointLight` mantain `glLightfv` light index. 
+
+**Hierarchical Transformation with [Dirty Flag](https://gameprogrammingpatterns.com/dirty-flag.html)**
+![alt text](readme_images/hierarchical_transform_dirty_flag.png)
+![alt text](readme_images/hierarchical_transform.gif)
+- imlemented by operator overloading with `Vector` and `Transform`
+- support translation & rotation, e.g., `Tank` class in `main.cpp`
+
+**One mesh sharing by multiple MeshInstance, i.e., [Flyweight](https://gameprogrammingpatterns.com/flyweight.html)** 
+ <p float="left">
+  <img src="readme_images/flyweight_init.png" width="49%" />
+  <img src="readme_images/flyweight_declare.png" width="45%" /> 
+</p>
+
+![alt text](readme_images/flyweight_usage.png)
+
+- Templated Polymorphism Reference Counting, successfully implemented, in `templates/ref.h` 
+
+**Multi-light source Cel Shaing by Phong Shaing with Rim.**
+![alt text](readme_images/multi_light_source.png)
+- beside built in `BoxMesh`, `ArrayMesh` allows external 3D models be rendered within the framework, e.g., `main.c` imports `rubber_duck.smf`. 
+
+
+I keep Minidot source files as simple and reabilable as I can, so Minidot could be developed under [YAGNI](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it). Hope it help if you're interested in any of these features!  
+
+## Download & Execute 
+Using [freeglut](https://freeglut.sourceforge.net/), downloaded from https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut
+
+Linking + execution requires:
+
+C:\Windows\System32\opengl32.dll
+
+C:\msys64\ucrt64\lib\libfreeglut.dll.a (which directs to C:\msys64\ucrt64\bin\libfreeglut.dll)
+
+Alternatively, you can use the existing GLUT_env folder
+
 - 使用 [freeglut](https://freeglut.sourceforge.net/), 用 https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut 載
     - link + 執行需要: C:\Windows\System32\opengl32.dll 和 C:\msys64\ucrt64\lib\libfreeglut.dll.a 引導至 C:\msys64\ucrt64\bin\libfreeglut.dll
     - 或是用目前的 `GLUT_env` folder 也行
+## P.S.
+Making a big and serious C++ project *is* hard!    
+Thanks for @godotengine creaters and communities sharing their tears and bloods for free. 
 
-## 如何在沒有 `GLUT_env` folder 下編譯 
+Predecessors, you have my greatest respect.
+
+
+### 如何在沒有 `GLUT_env` folder 下編譯 
 0. 總之先下 make，沒編譯出 `.exe` 再來看~
     - MinGW 使用者，或許能試試下 `mingw32-make`
 1. 開 makefile，確認 "GLUT parameters" 區域
@@ -18,12 +78,12 @@
 5. 還不行？ 我也不知道，請聯繫我！
 
 
-# 使用方式
+### 使用方式
 鍵盤 wasd 移動相機
 切換成大寫，移動 light source
 
 
-# 參考資料
+<!-- # 參考資料
 - 依我的理解簡化(刻/抄)了 Godot node 系統: https://github.com/godotengine/godot/tree/master
     - nodes 做主要 object, memory management
         - 簡化: Godot Node2D 會經過 CanvaItem Node, 多了 layer 控制功能，我們改採用 Node3D 設計概念: https://github.com/godotengine/godot/blob/master/scene/3d/node_3d.h  
@@ -56,7 +116,7 @@
     - 我只下 glutInitDisplayMode 的 GLUT_MULTISAMPLE 就有用了，反正預設的東西，有就好~
 - .ttf 運作原理: https://www.youtube.com/watch?v=caLqFG6w4Mk&ab_channel=Myvar
 - if v.s. empty function call: https://stackoverflow.com/questions/10797398/which-is-faster-empty-function-call-or-if-statements
-    - function call 比較傷，目前 RenderServer 還是用 if 去看是否 Node 需要 draw
+    - function call 比較傷，目前 RenderServer 還是用 if 去看是否 Node 需要 draw -->
 
 <!-- # RD (Reserch & Development) 時的自言自語
 - [X] fix dirty transform 

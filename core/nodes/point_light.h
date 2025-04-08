@@ -12,7 +12,7 @@ public:
 
     PointLight();
     PointLight(float x, float y, float z, Color color, 
-                float ambient = 0.3, float diffuse = 1, float specular = 1);
+                float ambient = 0.225, float diffuse = 1, float specular = 1);
     ~PointLight();
 
     void on_tree_entered();

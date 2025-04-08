@@ -1,5 +1,5 @@
 // This is learned from: https://blog.molecular-matters.com/2011/09/19/generic-type-safe-delegates-and-events-in-c/
-// Delegate in C#, demake in C++! (I can't understand all of them, so I just use what I understand): ONLY ALLOW ONE LISTENER, CAN'T HAVE ARGUMENT
+// Delegate in C#, demake in C++! (I can't understand all of them, so I just use what I understand): ONLY ALLOW 4 LISTENER, CAN'T HAVE ARGUMENT
 // need "internal" + template, creating functions to call real listener function, for member functions/normal function difference
 
 #ifndef DELEGATE_H
