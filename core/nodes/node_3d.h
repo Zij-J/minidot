@@ -16,7 +16,7 @@ public:
         .basis_y = {.x = 0, .y = 1, .z = 0}, 
         .basis_z = {.x = 0, .y = 0, .z = 1}, 
         .origin_offset = {.x = x, .y = y, .z = z}}) { // copy elision do things
-        tree_entered.add_listener<Node3D, on_tree_entered>(this);
+        tree_entered.add_listener<Node3D, &Node3D::on_tree_entered>(this);
     }
     ~Node3D() {}
     

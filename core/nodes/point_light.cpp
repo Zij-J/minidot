@@ -10,7 +10,7 @@ int PointLight::total_light_count = 0;
 
 
 PointLight::PointLight(): server_light(RenderServer::get_singleton().new_light_3d(this)) {
-    tree_entered.add_listener<PointLight, on_tree_entered>(this);
+    tree_entered.add_listener<PointLight, &PointLight::on_tree_entered>(this);
 }
 PointLight::PointLight(float x, float y, float z, Color color, float ambient, float diffuse, float specular): 
 Node3D(x, y, z),
@@ -19,7 +19,7 @@ diffuse(diffuse),
 specular(specular),
 color(std::move(color)),
 server_light(RenderServer::get_singleton().new_light_3d(this)) {
-    tree_entered.add_listener<PointLight, on_tree_entered>(this);
+    tree_entered.add_listener<PointLight, &PointLight::on_tree_entered>(this);
 }
 
 PointLight::~PointLight() {

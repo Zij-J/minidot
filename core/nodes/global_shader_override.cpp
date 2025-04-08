@@ -8,7 +8,7 @@
 
 GlobalShaderOverride::GlobalShaderOverride(string vertex_file, string fragment_file):
 program(glCreateProgram()) {
-    tree_entered.add_listener<GlobalShaderOverride, on_tree_entered>(this);
+    tree_entered.add_listener<GlobalShaderOverride, &GlobalShaderOverride::on_tree_entered>(this);
 
     compile_and_link(vertex_file, GL_VERTEX_SHADER);
     compile_and_link(fragment_file, GL_FRAGMENT_SHADER);

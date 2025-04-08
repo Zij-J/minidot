@@ -4,11 +4,11 @@
 #include <typeinfo> // `typeid` keyword for C# `is` like behavior
 
 Camera3D::Camera3D() {
-    tree_entered.add_listener<Camera3D, on_tree_entered>(this);
+    tree_entered.add_listener<Camera3D, &Camera3D::on_tree_entered>(this);
 }
 Camera3D::Camera3D(float x, float y, float z)
 : Node3D(x, y, z) {
-    tree_entered.add_listener<Camera3D, on_tree_entered>(this);
+    tree_entered.add_listener<Camera3D, &Camera3D::on_tree_entered>(this);
 }
 
 Camera3D::~Camera3D() {

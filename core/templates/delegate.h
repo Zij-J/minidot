@@ -2,6 +2,11 @@
 // Delegate in C#, demake in C++! (I can't understand all of them, so I just use what I understand): ONLY ALLOW 4 LISTENER, CAN'T HAVE ARGUMENT
 // need "internal" + template, creating functions to call real listener function, for member functions/normal function difference
 
+// Leave some notes about function pointers cause I always forget how to use it:
+//      how: https://stackoverflow.com/questions/6893285/why-do-function-pointer-definitions-work-with-any-number-of-ampersands-or-as
+//      why: https://stackoverflow.com/questions/12152167/why-is-using-the-function-name-as-a-function-pointer-equivalent-to-applying-the
+// member function won't convert itself to pointer to itself in Linux gcc, must explicit add `&` when pass as function pointer
+
 #ifndef DELEGATE_H
 #define DELEGATE_H
 

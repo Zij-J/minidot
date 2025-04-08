@@ -11,7 +11,7 @@ class Node2D: public Node {
 public:
 
     Node2D(float x = 0, float y = 0): local_transform((Transform2D){.basis_x = {.x = 1, .y = 0}, .basis_y = {.x = 0, .y = 1}, .origin_offset = {.x = x, .y = y}}) { // copy elision do things
-        tree_entered.add_listener<Node2D, on_tree_entered>(this);
+        tree_entered.add_listener<Node2D, &Node2D::on_tree_entered>(this);
     }
     ~Node2D() {}
     
