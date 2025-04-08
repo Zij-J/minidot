@@ -3,7 +3,8 @@
 #ifndef INPUT_SERVER_H
 #define INPUT_SERVER_H
 
-#include "../nodes/mesh_instance_2d.h"
+#include "../nodes/viewport.h"
+#include "../error/error_handler.h"
 
 class InputServer {    
 public:

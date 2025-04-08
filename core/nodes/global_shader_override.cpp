@@ -1,17 +1,31 @@
-#include "global_shader.h"
+#include "global_shader_override.h"
 
 #include <fstream> // ifstream
 #include <sstream> // stringstream
-#include "../core/error/error_handler.h"
-#include "../core/debugger/code_tester.h"
+#include "../error/error_handler.h"
+#include "../debugger/code_tester.h"
+#include "../servers/render_server.h"
 
-GlobalShader::GlobalShader():
-program(glCreateProgram()) 
-{}
+GlobalShaderOverride::GlobalShaderOverride(string vertex_file, string fragment_file):
+program(glCreateProgram()) {
+    tree_entered.add_listener<GlobalShaderOverride, on_tree_entered>(this);
+
+    compile_and_link(vertex_file, GL_VERTEX_SHADER);
+    compile_and_link(fragment_file, GL_FRAGMENT_SHADER);
+}
+
+GlobalShaderOverride::~GlobalShaderOverride() {
+    RenderServer::get_singleton().set_shader_program_3d(0); // revert back to default
+    glDeleteProgram(program);
+}
 
 
+void GlobalShaderOverride::on_tree_entered() {
+    DEBUG_COUT(program);
+    RenderServer::get_singleton().set_shader_program_3d(program);
+}
 
-void GlobalShader::compile_and_link(string file, GLuint shader_type) {
+void GlobalShaderOverride::compile_and_link(string file, GLuint shader_type) {
 
     // create shader
     GLuint shader = glCreateShader(shader_type);
@@ -51,12 +65,4 @@ void GlobalShader::compile_and_link(string file, GLuint shader_type) {
     // Clean ups
     glDeleteShader(shader); // after successful link, shader itself can be removed
     shader_file.close();
-}
-
-void GlobalShader::start_shading() {
-    glUseProgram(program);
-}
-
-GlobalShader::~GlobalShader() {
-    glDeleteProgram(program);
 }

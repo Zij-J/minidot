@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 
+#include "core/nodes/global_shader_override.h" // contain glew, had better include first
 #include "core/config/project_setting.h"
 #include "core/nodes/node.h"
 #include "core/nodes/node_2d.h"
@@ -19,11 +20,6 @@
 #include "core/resources/box_mesh.h" 
 #include "core/servers/render_server.h"
 #include "core/thirdparty/sfm_loader/SMFLoader.h"
-#include "shaders/global_shader.h"
-
-
-#define DEFAULT_VERTEX_SHADER "shaders/phong_vertex.glsl"
-#define DEFAULT_FRAGMENT_SHADER "shaders/phong_fragment.glsl"
 
 
 void display();
@@ -158,11 +154,9 @@ int main(int argc, char **argv) {
 
 
     // shader init
-    GlobalShader default_global_shader;
-    default_global_shader.compile_and_link(DEFAULT_VERTEX_SHADER, GL_VERTEX_SHADER);
-    default_global_shader.compile_and_link(DEFAULT_FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
-    default_global_shader.start_shading(); // replace fixed function pipeline to programmable pipeline.
-    
+    GlobalShaderOverride *global_shader = new GlobalShaderOverride(ProjectSetting::get_singleton().default_vertex_shader, ProjectSetting::get_singleton().default_fragment_shader);
+    root.add_child(global_shader);
+
     // // world center & light init in node system
     // root.add_child(world_center);
     // root.add_child(global_light);

@@ -14,6 +14,8 @@ public:
     const int design_width = 1920; 
     const int design_height; 
 
+    const char *default_vertex_shader = "shaders/phong_vertex.glsl";
+    const char *default_fragment_shader = "shaders/phong_fragment.glsl";
 
     static ProjectSetting &get_singleton() {
         if (singleton == nullptr) { // lazy init

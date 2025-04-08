@@ -3,6 +3,7 @@
 #ifndef RENDER_SERVER_H
 #define RENDER_SERVER_H
 
+#include <GL/glew.h>
 #include "../resources/texture.h"
 #include "../resources/mesh.h"
 #include "../nodes/point_light.h"
@@ -61,6 +62,12 @@ public:
     //     now_texture->next = new_texture;
     // }
 
+    // We use old fix function pipeline OpenGL, so `program = 0` and `glUseProgram(program)` can still revert pipeline back to default. Don't use it in new OpenGL!  
+    // https://stackoverflow.com/questions/13546461/what-does-gluseprogram0-do
+    void set_shader_program_3d(GLuint program) {
+        shader_program_3d = program;
+    }
+
     const ServerDrawingObject *new_mesh_instance_2d(Ref<Mesh> mesh, Node2D *containing_node);
     const ServerDrawingObject *new_mesh_instance_3d(Ref<Mesh> mesh, Node3D *containing_node);
     const ServerDrawingObject *new_light_3d(PointLight *light);
@@ -117,6 +124,8 @@ private:
     DrawingMesh2D *mesh_list_2d = new DrawingMesh2D;           // all drawables in 2D
     DrawingMesh3D *mesh_list_3d = new DrawingMesh3D;           // all drawables in 3D
     DrawingLight3D *light_list_3d = new DrawingLight3D;           // all lights in 3D
+
+    GLuint shader_program_3d = 0;
 
     RenderServer(Viewport *root): root(root) {
         // texture_list->next = nullptr;

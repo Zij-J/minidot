@@ -7,9 +7,10 @@ The repo contains a tank game demo with cel shading, written in `main.cpp`, `pho
 
 ## Features
 **Node tree with 2D & 3D node coexists**
-
+![alt text](readme_images/node_tree_usage.png)
+![alt text](readme_images/first_person_sight.png)
 - another `mesh_list_2d`/`3d` in `RenderServer` records and renders meshes to prevent tree traversal in every frame.   
-- can use for HUD of 3D scene, e.g., red sight in First Person View
+- useful for 3D scene's HUD, e.g., red sight in First Person View
 
 **Demake Delegate, aka [signal system](https://docs.godotengine.org/en/stable/classes/class_signal.html), aka [Observer](https://gameprogrammingpatterns.com/observer.html)**
 <p float="left">
@@ -17,7 +18,7 @@ The repo contains a tank game demo with cel shading, written in `main.cpp`, `pho
   <img src="readme_images/delegate_notify.png" width="45%" /> 
 </p>
 
-- delegate `tree_entered` helps `Node2D`/`Node3D` cache parent node, `Camera3D` register to `Viewport` (transform manager), and `PointLight` mantain `glLightfv` light index. 
+- delegate `tree_entered` helps `Node2D`/`Node3D` cache parent node, `Camera3D` register to `Viewport` (transform manager), etc.
 
 **Hierarchical Transformation with [Dirty Flag](https://gameprogrammingpatterns.com/dirty-flag.html)**
 ![alt text](readme_images/hierarchical_transform_dirty_flag.png)

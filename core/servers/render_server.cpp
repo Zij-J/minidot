@@ -110,7 +110,7 @@ void RenderServer::redraw() {
 
     // draw 3D first (only has Mesh)
     if (root->get_camera_3d() != nullptr) {
-        
+        glUseProgram(shader_program_3d); // start custom shader
         glEnable(GL_LIGHTING); // has light 
         glEnable(GL_COLOR_MATERIAL);  // when light, glColor become material
         glEnable(GL_DEPTH_TEST);  // Enable depth testing(sort by depth)
@@ -148,7 +148,8 @@ void RenderServer::redraw() {
         #endif
 
         // reset camera
-        // glDisable(GL_LIGHTING); // 2D no light
+        glUseProgram(0);  // back to default fix function
+        glDisable(GL_LIGHTING); // 2D no light
         glDisable(GL_COLOR_MATERIAL);  // 2D no need material
         glDisable(GL_DEPTH_TEST);  // 2D no sort by depth
         glMatrixMode(GL_PROJECTION);
