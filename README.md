@@ -38,6 +38,7 @@ The repo contains a tank game demo with cel shading, written in `main.cpp`, `pho
 
 **Multi-light source Cel Shaing by Phong Shaing with Rim.**
 ![alt text](readme_images/multi_light_source.png)
+![alt text](readme_images/cel_shading.gif)
 - beside built in `BoxMesh`, `ArrayMesh` allows external 3D models be rendered within the framework, e.g., `main.c` imports `rubber_duck.smf`. 
 
 
@@ -57,12 +58,6 @@ Alternatively, you can use the existing GLUT_env folder
 - 使用 [freeglut](https://freeglut.sourceforge.net/), 用 https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut 載
     - link + 執行需要: C:\Windows\System32\opengl32.dll 和 C:\msys64\ucrt64\lib\libfreeglut.dll.a 引導至 C:\msys64\ucrt64\bin\libfreeglut.dll
     - 或是用目前的 `GLUT_env` folder 也行
-## P.S.
-Making a big and serious C++ project *is* hard!    
-Thanks for @godotengine creaters and communities sharing their tears and bloods for free. 
-
-Predecessors, you have my greatest respect.
-
 
 ### 如何在沒有 `GLUT_env` folder 下編譯 
 0. 總之先下 make，沒編譯出 `.exe` 再來看~
@@ -79,9 +74,27 @@ Predecessors, you have my greatest respect.
 5. 還不行？ 我也不知道，請聯繫我！
 
 
-### 使用方式
-鍵盤 wasd 移動相機
-切換成大寫，移動 light source
+## Controls 
+`w`, `a`, `s`, `d`: move your red tank related to world position    
+`left`, `right`: rotate the cannon base of your tank    
+`up`, `down`: adjust fire angle of your cannon  
+`space`: fire your cannon     
+
+`q`, `e`: move world camera forward/backward  
+`z`, `c`: move world camera leftward/rightward  
+`r`, `v`: move world camera upward/downward  
+
+`f`: toggle the camera between first person view and third person view.  
+`x`: toggle center light color between pink and white.  
+## P.S.
+Making a big and serious C++ project *is* hard!   
+So many details need to be handled. So many design decisions need to be made.
+So many time need to be spent. 
+
+
+Thanks for @godotengine creaters and communities sharing your blood and tears, *for free*.   
+Predecessors, you have my greatest respect.
+
 
 
 <!-- # 參考資料
