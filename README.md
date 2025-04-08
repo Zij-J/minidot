@@ -45,34 +45,33 @@ The repo contains a tank game demo with cel shading, written in `main.cpp`, `pho
 I keep Minidot source files as simple and reabilable as I can, so Minidot could be developed under [YAGNI](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it). Hope it help if you're interested in any of these features!  
 
 ## Download & Execute 
-Using [freeglut](https://freeglut.sourceforge.net/), downloaded from https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut
+Github's Release contains the executable and all dependencies  needed for Windows. Windows users can directly download and execute the demo from there.
 
-Linking + execution requires:
+As for other operating system users, please try compiling from source.  
+### Compile from source 
+1. Download [freeglut](https://freeglut.sourceforge.net/) and [glew](https://freeglut.sourceforge.net/) for your operating system.  
+    >For Windows, I use [MSYS2](https://www.msys2.org/) as C/C++ environment and install them following [this(freeglut)](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut) and [this(glew)](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-glew).   
 
-C:\Windows\System32\opengl32.dll
+2. Ensure your `opengl32`, `libfreeglut`, and `glew32` shared  library files are reachable by executable in project root, i.e., in folders included in PATH or in project root too.  
+    > For example, my shared library files are `.dll`s. They are in: `C:\Windows\System32\opengl32.dll`, `C:\msys64\ucrt64\bin\libfreeglut.dll`, and `C:\msys64\ucrt64\bin\glew32.dll`. My PATH includes `C:\Windows\System32` and `C:\msys64\ucrt64\bin` so I'm good to go.
+    
+3. Use [Make](https://www.gnu.org/software/make/manual/make.html) and the Makefile. Open terminal within the project root. Enter `make`. It shall successfully builds the executable `main`. If it fails, please try step 4 and 5 to see if the error messages be lessened or not. 
+    > I use [Make provided by MSYS2](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-make). Enter `mingw32-make` and you will get `main.exe`.
 
-C:\msys64\ucrt64\lib\libfreeglut.dll.a (which directs to C:\msys64\ucrt64\bin\libfreeglut.dll)
+    Tip: Try speed up the compilation by `make -j<number>` to utilize your multicore CPU!
+    > For example, `make -j8`.
+4. Ensure your C++ compiler can find all header files downloaded in `/GL` folder.
+    > My `/GL` folder is `C:\msys64\ucrt64\include\GL`.  
 
-Alternatively, you can use the existing GLUT_env folder
+    If compiler fails to find them, modify `./Makefile`. Fine line `GLUT_INCLUDE_ARGU := -I"./GLUT_env"`. Change `./GLUT_env` to the path containing `/GL` headers.
+    > For me, the line should be `GLUT_INCLUDE_ARGU := -I"C:\msys64\ucrt64\include"`
 
-- 使用 [freeglut](https://freeglut.sourceforge.net/), 用 https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-freeglut 載
-    - link + 執行需要: C:\Windows\System32\opengl32.dll 和 C:\msys64\ucrt64\lib\libfreeglut.dll.a 引導至 C:\msys64\ucrt64\bin\libfreeglut.dll
-    - 或是用目前的 `GLUT_env` folder 也行
+5.  Ensure your C++ compiler can find static libraries of `libfreeglut` and `libglew32`
+    > My static libraries are `C:\msys64\ucrt64\lib\libfreeglut.dll.a` and `C:\msys64\ucrt64\lib\libglew.dll.a`.  
 
-### 如何在沒有 `GLUT_env` folder 下編譯 
-0. 總之先下 make，沒編譯出 `.exe` 再來看~
-    - MinGW 使用者，或許能試試下 `mingw32-make`
-1. 開 makefile，確認 "GLUT parameters" 區域
-    - USING_GLUT: GLUT 的 `.lib` 或 `lib .dll.a` 的名字
-    - GLUT_INCLUDE_ARGU: 放 `glut.h` 的資料夾路徑
-    - GLUT_LIB_ARGU: 放 `.lib` 或 `lib .dll.a` 的資料夾路徑
-2. 確認 `glut.h` 有沒有放在 `GL` 資料夾下面
-    - 有: 請 `#include <GL/glut.h>`
-    - 沒: 請 `#include <glut.h>`
-3. 確認 GLUT 的 .dll 檔在 PATH ，或在 `.exe` 同一個資料夾下，能被 `.exe` 存取到
-4. 確認 GLUT 的 .dll 檔是 64 bits 的，32 bits 版無法 link
-5. 還不行？ 我也不知道，請聯繫我！
-
+    If compiler fails to find them, modify `./Makefile`. Fine line `GLUT_LIB_ARGU := -L"./GLUT_env"`. Change `./GLUT_env` to the path containing those static libraries.
+    > For me, the line should be `GLUT_LIB_ARGU := -L"C:\msys64\ucrt64\lib"`
+6. Still get problems? Feel free to open an Issue on Github. I'll help as much as I can! 
 
 ## Controls 
 `w`, `a`, `s`, `d`: move your red tank related to world position    
@@ -95,7 +94,19 @@ So many time need to be spent.
 Thanks for @godotengine creaters and communities sharing your blood and tears, *for free*.   
 Predecessors, you have my greatest respect.
 
-
+<!-- ### 如何在沒有 `GLUT_env` folder 下編譯 
+0. 總之先下 make，沒編譯出 `.exe` 再來看~
+    - MinGW 使用者，或許能試試下 `mingw32-make`
+1. 開 makefile，確認 "GLUT parameters" 區域
+    - USING_GLUT: GLUT 的 `.lib` 或 `lib .dll.a` 的名字
+    - GLUT_INCLUDE_ARGU: 放 `glut.h` 的資料夾路徑
+    - GLUT_LIB_ARGU: 放 `.lib` 或 `lib .dll.a` 的資料夾路徑
+2. 確認 `glut.h` 有沒有放在 `GL` 資料夾下面
+    - 有: 請 `#include <GL/glut.h>`
+    - 沒: 請 `#include <glut.h>`
+3. 確認 GLUT 的 .dll 檔在 PATH ，或在 `.exe` 同一個資料夾下，能被 `.exe` 存取到
+4. 確認 GLUT 的 .dll 檔是 64 bits 的，32 bits 版無法 link
+5. 還不行？ 我也不知道，請聯繫我！ -->
 
 <!-- # 參考資料
 - 依我的理解簡化(刻/抄)了 Godot node 系統: https://github.com/godotengine/godot/tree/master
